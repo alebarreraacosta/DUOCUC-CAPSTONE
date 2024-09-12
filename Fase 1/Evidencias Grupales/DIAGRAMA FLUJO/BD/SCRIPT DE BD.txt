@@ -1,0 +1,112 @@
+-- Crear el esquema 'Inventario'
+CREATE SCHEMA Inventario;
+GO
+
+-- Tabla: Estados_Inventario
+CREATE TABLE Inventario.Estados_Inventario (
+    id_estado INT IDENTITY PRIMARY KEY,
+    nombre_estado VARCHAR(50) NOT NULL
+);
+GO
+
+-- Insertar los estados posibles
+INSERT INTO Inventario.Estados_Inventario (nombre_estado) VALUES ('Cuadrado'), ('No Cuadrado');
+GO
+
+
+-- Tabla: Roles
+CREATE TABLE Inventario.Roles (
+    id_rol INT IDENTITY PRIMARY KEY,
+    nombre_rol VARCHAR(50) NOT NULL,
+    descripcion VARCHAR(255) NULL
+);
+GO
+
+-- Tabla: Usuarios
+CREATE TABLE Inventario.Usuarios (
+    id_usuario INT IDENTITY PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    correo VARCHAR(100) UNIQUE NOT NULL,
+    contraseña VARCHAR(256) NOT NULL,
+    id_rol INT FOREIGN KEY REFERENCES Inventario.Roles(id_rol)
+);
+GO
+
+-- Tabla: Inventario
+CREATE TABLE Inventario.Inventario (
+    id_inventario INT IDENTITY PRIMARY KEY,
+    id_usuario INT FOREIGN KEY REFERENCES Inventario.Usuarios(id_usuario), 
+    fecha_inicio DATETIME NOT NULL,
+    fecha_termino DATETIME NULL,
+    id_estado INT FOREIGN KEY REFERENCES Inventario.Estados_Inventario(id_estado)
+);
+GO
+
+
+-- Tabla: Inventario_SAP
+CREATE TABLE Inventario.Inventario_SAP (
+    id_inventario_sap INT IDENTITY PRIMARY KEY,
+    id_inventario INT FOREIGN KEY REFERENCES Inventario.Inventario(id_inventario),
+    numero_articulo VARCHAR(50) NOT NULL,
+    descripcion_articulo VARCHAR(150) NOT NULL,
+    unidad_medida VARCHAR(50) NOT NULL,
+    stock_almacen INT NOT NULL,
+    precio_unitario DECIMAL(18, 2) NOT NULL,
+    saldo_almacen DECIMAL(18, 2) NOT NULL,
+    codigo_barras VARCHAR(100) UNIQUE NOT NULL,
+    codigo_almacen VARCHAR(10) NOT NULL,
+    fecha_carga DATETIME NOT NULL
+);
+GO
+
+-- Tabla: Inventario_Fisico
+CREATE TABLE Inventario.Inventario_Fisico (
+    id_inventario_fisico INT IDENTITY PRIMARY KEY,
+    id_inventario INT FOREIGN KEY REFERENCES Inventario.Inventario(id_inventario),
+    id_inventario_sap INT FOREIGN KEY REFERENCES Inventario.Inventario_SAP(id_inventario_sap),
+    cantidad_fisica INT NOT NULL,
+    fecha DATETIME NOT NULL,
+    id_usuario INT FOREIGN KEY REFERENCES Inventario.Usuarios(id_usuario),
+    CONSTRAINT UQ_Inventario_Fisico UNIQUE (id_inventario, id_inventario_sap)
+);
+GO
+
+-- Tabla: Inventario_Cuadratura_Diferencias
+CREATE TABLE Inventario.Inventario_Cuadratura_Diferencias (
+    id_diferencia INT IDENTITY PRIMARY KEY,
+    id_inventario INT FOREIGN KEY REFERENCES Inventario.Inventario(id_inventario),
+    id_inventario_sap INT FOREIGN KEY REFERENCES Inventario.Inventario_SAP(id_inventario_sap),
+    cantidad_sap INT NOT NULL,
+    cantidad_fisica INT NOT NULL,
+    diferencia INT NOT NULL,
+    comentarios VARCHAR(255) NULL,
+    evidencias VARCHAR(500) NULL,
+    codigo_almacen VARCHAR(10) NOT NULL,
+    fecha_cuadre DATETIME NOT NULL
+);
+GO
+
+-- Tabla: Items_No_Encontrados
+CREATE TABLE Inventario.Items_No_Encontrados (
+    id_item_no_encontrado INT IDENTITY PRIMARY KEY,
+    id_inventario INT FOREIGN KEY REFERENCES Inventario.Inventario(id_inventario),
+    numero_articulo VARCHAR(50) NOT NULL,
+    codigo_barras VARCHAR(100) NOT NULL,
+    descripcion VARCHAR(255) NULL,
+    cantidad_contada INT NOT NULL,
+    codigo_almacen VARCHAR(10) NOT NULL,
+    fecha DATETIME NOT NULL,
+    id_usuario INT FOREIGN KEY REFERENCES Inventario.Usuarios(id_usuario)
+);
+GO
+
+-- Tabla: Informes_Inventario (aislada)
+CREATE TABLE Inventario.Informes_Inventario (
+    id_informe INT IDENTITY PRIMARY KEY,
+    id_inventario INT,
+    id_usuario INT,
+    fecha_generacion DATETIME NOT NULL,
+    pdf_path VARCHAR(500) NOT NULL,
+    resumen VARCHAR(255) NULL
+);
+GO
