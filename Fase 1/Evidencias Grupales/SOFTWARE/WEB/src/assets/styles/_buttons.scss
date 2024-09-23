@@ -1,0 +1,17 @@
+@import "colors";
+
+.btn-primary{
+    width: 100%;
+    background-color: $color-secondary;
+    color: $white;
+    border: 0 none;
+    border-radius: 10px;
+    font-size: 13px;
+    text-align: center;
+    padding: 7px;
+    &:hover {
+        background-color: $color-primary;
+        cursor: pointer;
+        transition: 1s;
+    }
+}
