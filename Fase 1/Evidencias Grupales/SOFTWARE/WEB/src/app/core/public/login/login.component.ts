@@ -45,13 +45,13 @@ export class LoginComponent  implements OnInit  {
             }
           },
           error:(err)=>{
-            
+            this.spinnerService.hideSpinner();
             if(err.status == 401){
               this.alertService.showInfoAlert(null, 'Credenciales inválidas', 'Aceptar', 'error');
             }
             if(err.status >=499 && err.status <=599){
               console.error(err);
-              this.alertService.showInfoAlert(null, 'Ha ocurrido un error, llamar a soporte tecnico', 'Aceptar', 'error');
+              this.alertService.showInfoAlert(null, 'Ha ocurrido un error, llamar a soporte técnico', 'Aceptar', 'error');
             }
             
 
