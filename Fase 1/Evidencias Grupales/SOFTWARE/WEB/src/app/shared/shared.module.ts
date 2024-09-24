@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { PageHeaderComponent } from './components/page-header/page-header.component';
+import { AngularMaterialModuleGD } from './angular-material.module';
 
 
 
@@ -17,13 +18,15 @@ import { PageHeaderComponent } from './components/page-header/page-header.compon
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    AngularMaterialModuleGD
   ], 
   exports:[
     SpinnerComponent,
     FormLoginComponent,
     NgxSpinnerModule,
-    PageHeaderComponent
+    PageHeaderComponent,
+    AngularMaterialModuleGD
 
   ]
 })

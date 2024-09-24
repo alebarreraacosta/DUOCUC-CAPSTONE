@@ -1,1 +1,20 @@
-<p>principal works!</p>
+<app-page-header [pageTitle]="title"></app-page-header>
+
+<div>
+    <div class="d-flex">
+        <div class="margin-right-20">
+            <h3>Búsqueda por meses:</h3>
+        </div>
+        <div>
+            <mat-form-field>
+                <mat-select [value]="'Seleccione'" >
+                    <mat-option [value]="'Seleccione'" >Seleccione</mat-option>
+                  <mat-option *ngFor="let mesAnnio of datosSelector" [value]="mesAnnio.mesAnnio">{{mesAnnio.mesAnnio}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+        </div>
+    </div>
+
+
+
+</div>
