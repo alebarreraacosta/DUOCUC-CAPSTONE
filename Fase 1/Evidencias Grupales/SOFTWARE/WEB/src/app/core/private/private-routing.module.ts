@@ -5,6 +5,7 @@ import { CuadraturaComponent } from './cuadratura/cuadratura.component';
 import { UsuariosComponent } from './usuarios/usuarios.component';
 import { ReportesComponent } from './reportes/reportes.component';
 import { CommonModule } from '@angular/common';
+import { AuthGuard } from '../public/guard/auth.guard';
 const routes: Routes = [
 
   {
@@ -23,7 +24,8 @@ const routes: Routes = [
         path: 'reportes',
         component: ReportesComponent
       },
-    ]
+    ], 
+    canMatch:[AuthGuard]
   }
 ]
 

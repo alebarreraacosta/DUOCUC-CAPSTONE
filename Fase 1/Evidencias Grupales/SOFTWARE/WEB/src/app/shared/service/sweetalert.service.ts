@@ -10,14 +10,25 @@ export class AlertService {
   constructor() {}
 
   // Método para mostrar alertas informativas
-  showInfoAlert(content: string | null, title: string = 'Información', confirmButtonText: string = 'Cerrar'): void {
-    Swal.fire({
-      title: title,
-      html: content == null ? '':content ,
-      icon: 'info',
-      confirmButtonText: confirmButtonText,
-      backdrop:false
-    });
+  showInfoAlert(content: string | null, title: string = 'Información', confirmButtonText: string = 'Cerrar',icon:string): void {
+    if(icon == 'error'){
+      Swal.fire({
+        title: title,
+        html: content == null ? '':content ,
+        icon: 'error',
+        confirmButtonText: confirmButtonText,
+        backdrop:false
+      });
+    }else{
+      Swal.fire({
+        title: title,
+        html: content == null ? '':content ,
+        icon: 'info',
+        confirmButtonText: confirmButtonText,
+        backdrop:false
+      });
+    }
+    
   }
 
   // Método para mostrar alertas de confirmación

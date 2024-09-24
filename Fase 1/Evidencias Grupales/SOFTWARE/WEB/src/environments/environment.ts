@@ -1,5 +1,5 @@
 export const environment = {
     production: false,
-    HOST: 'http://localhost:3444',
+    HOST: 'http://demo7311560.mockable.io/',
     apiContextPath: 'api-garlic',
   };
