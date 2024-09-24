@@ -6,6 +6,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginComponent } from './core/public/login/login.component';
 import { PrivateRoutingModule } from './core/private/private-routing.module';
 import { SharedModule } from './shared/shared.module';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { HttpClientModule } from '@angular/common/http';
+
 
 
 @NgModule({
@@ -17,8 +20,10 @@ import { SharedModule } from './shared/shared.module';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    HttpClientModule,
     PrivateRoutingModule,
-    SharedModule
+    SharedModule,
+    NgxSpinnerModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

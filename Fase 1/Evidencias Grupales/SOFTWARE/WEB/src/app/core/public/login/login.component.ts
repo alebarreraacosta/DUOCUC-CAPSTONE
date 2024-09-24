@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { SpinnerService } from 'src/app/shared/service/spinner.service';
+import { AlertService } from 'src/app/shared/service/sweetalert.service';
 
 @Component({
   selector: 'app-login',
@@ -12,10 +14,11 @@ export class LoginComponent  implements OnInit  {
   titulo:string = 'CIG';
 
 
-  constructor() {}
+  constructor(private spinnerService: SpinnerService,
+    private alertService: AlertService
+  ) {}
 
   ngOnInit(): void {
-    console.log('ngOnInit en LoginComponent');
   }
  
   handleFormSubmit(form: FormGroup): void {
@@ -23,10 +26,24 @@ export class LoginComponent  implements OnInit  {
       console.log('Login form submitted:');
       console.log(form.get('username')?.value);
       console.log(form.get('password')?.value);
-      // Aquí puedes agregar la lógica para enviar los datos a un servidor o API
-    } else {
-      console.log('Login form is invalid');
-    }
+    
+      this.alertService.showInfoAlert(null, '¿Estás seguro en redirigir al home?', 'Sí, Continuar');
+    
+      /*
+          this.modalService.watchConfirmAction().subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          console.log("Acción confirmada");
+          this.spinnerService.showSpinner();
+
+
+          // Realiza la acción de confirmación
+        } else {
+          console.log("Acción cancelada");
+          // Realiza la acción de cancelación
+        }
+      });  */
+  
+    } 
   }
 
 

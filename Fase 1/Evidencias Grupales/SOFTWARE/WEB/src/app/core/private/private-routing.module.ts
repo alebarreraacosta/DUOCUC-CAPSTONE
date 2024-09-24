@@ -33,7 +33,7 @@ const routes: Routes = [
   ],
   imports: [
     RouterModule.forChild(routes),
-    CommonModule
+    CommonModule,
   ],
   exports: [
     RouterModule
