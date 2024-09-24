@@ -6,12 +6,17 @@ import { UsuariosComponent } from './usuarios/usuarios.component';
 import { ReportesComponent } from './reportes/reportes.component';
 import { CommonModule } from '@angular/common';
 import { AuthGuard } from '../public/guard/auth.guard';
+import { PrincipalComponent } from './principal/principal.component';
 const routes: Routes = [
 
   {
     path: 'home',
     component: HomeComponent,
     children: [
+      {
+        path: 'principal',
+        component: PrincipalComponent
+      },
       {
         path: 'cuadratura',
         component: CuadraturaComponent

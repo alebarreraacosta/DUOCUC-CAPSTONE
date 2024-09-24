@@ -8,13 +8,15 @@ import { PrivateRoutingModule } from './core/private/private-routing.module';
 import { SharedModule } from './shared/shared.module';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { HttpClientModule } from '@angular/common/http';
+import { PrincipalComponent } from './core/private/principal/principal.component';
 
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent
+    LoginComponent,
+    PrincipalComponent
   ],
   imports: [
     BrowserModule,

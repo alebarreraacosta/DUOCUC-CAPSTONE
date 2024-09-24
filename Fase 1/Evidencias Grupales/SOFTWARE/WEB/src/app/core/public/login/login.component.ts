@@ -40,7 +40,7 @@ export class LoginComponent  implements OnInit  {
           next:(result)=>{
             if(result){
               this.sessionGlobal.setDataUser(result);
-              this.router.navigate(['private/home']);
+              this.router.navigate(['private/home/principal']);
               this.spinnerService.hideSpinner();
             }
           },

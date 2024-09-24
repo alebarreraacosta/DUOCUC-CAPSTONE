@@ -17,7 +17,7 @@ export class HomeComponent implements OnInit{
     {
       icon: 'home',
       descripcion: 'Principal',
-      ruta:'/private/home'
+      ruta:'/private/home/principal'
     },
     {
       icon: 'assessment',
