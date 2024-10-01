@@ -80,6 +80,7 @@
               "browserTarget": "web-control-inv-gardilcic:build:development"
             }
           },
+          
           "defaultConfiguration": "development"
         },
         "extract-i18n": {

@@ -34,7 +34,7 @@ export class LoginComponent  implements OnInit  {
       this.spinnerService.showSpinner();
       this.loginService.login({
         username: form.get('username')?.value,
-        password: this.encriptarContrasenna(form.get('password')?.value)
+        password: form.get('password')?.value
       } as LoginRequest).subscribe(
         {
           next:(result)=>{
@@ -45,12 +45,12 @@ export class LoginComponent  implements OnInit  {
             }
           },
           error:(err)=>{
+            console.log(err);
             this.spinnerService.hideSpinner();
             if(err.status == 401){
               this.alertService.showInfoAlert(null, 'Credenciales inválidas', 'Aceptar', 'error');
             }
             if(err.status >=499 && err.status <=599){
-              console.error(err);
               this.alertService.showInfoAlert(null, 'Ha ocurrido un error, llamar a soporte técnico', 'Aceptar', 'error');
             }
             

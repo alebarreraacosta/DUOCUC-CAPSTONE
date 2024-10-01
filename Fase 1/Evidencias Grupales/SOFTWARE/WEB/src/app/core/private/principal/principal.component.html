@@ -1,20 +1,59 @@
 <app-page-header [pageTitle]="title"></app-page-header>
-
 <div>
     <div class="d-flex">
         <div class="margin-right-20">
-            <h3>Búsqueda por meses:</h3>
+            <h3 ><b>Búsqueda por meses:</b></h3>
         </div>
         <div>
             <mat-form-field>
-                <mat-select [value]="'Seleccione'" >
-                    <mat-option [value]="'Seleccione'" >Seleccione</mat-option>
+                <mat-select [value]="this.valorSelectorSeleccionadoMesAnnio" (selectionChange)="seleccionarMesAnnio($event)">
                   <mat-option *ngFor="let mesAnnio of datosSelector" [value]="mesAnnio.mesAnnio">{{mesAnnio.mesAnnio}}</mat-option>
                 </mat-select>
               </mat-form-field>
         </div>
     </div>
+</div>
 
+<div class="grafic-inventarios mb-4">
+    <div class="grafic-size" >
+        <canvas  [id]="nombreGraficoMesAnnio" [width]="500" [height]="300"> 
+            {{ graficoMesAnnio }}
+        </canvas>
+    </div>
 
+    <div class="grafic-size" >
+        <canvas  [id]="nombreGraficoMesBodega" [width]="500" [height]="300"> 
+            {{ graficoMesBodega }}
+        </canvas>
+    </div>
+    <div *ngIf="mensajeSinDatos">
+        <p>No hay datos disponibles para mostrar en este momento.</p>
+      </div>
+</div>
+
+<div>
+    <div class="d-flex">
+        <div class="margin-right-20">
+            <h3><b>Código articulo:</b></h3>
+        </div>
+        <div >
+            <mat-form-field >
+                <mat-select [value]="this.valorSelectorSeleccionadoProducto" (selectionChange)="seleccionarProducto($event)">
+                  <mat-option *ngFor="let producto of selectorProductos" [value]="producto.codigoProducto">{{producto.codigoProducto}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+        </div>
+
+        <div class="margin-left-20" *ngIf="isHabilitarDescripcion">
+            <h3><b>Descripción:</b> {{descripcionSeleccionada}}</h3>
+        </div>
+    </div>
+
+    <div class="grafic-size" *ngIf="isHabilitarDescripcion" >
+        <canvas  [id]="nombreGraficoPorProducto" [width]="500" [height]="100"> 
+            {{ graficoPorProducto }}
+        </canvas>
+    </div>
 
 </div>
+

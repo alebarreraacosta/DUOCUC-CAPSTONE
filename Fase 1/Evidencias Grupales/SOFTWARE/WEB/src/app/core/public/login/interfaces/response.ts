@@ -1,6 +1,15 @@
 export interface LoginResponse{
-    nombre:string;
-    apellidoPaterno:string;
-    apellidoMaterno:string;
-    rolID:string;
+
+    exito:boolean;
+    mensaje?:string;
+    usuario?:Usuario;
   }
+
+export interface Usuario{
+  IdUsuario: number;
+  Nombre: string;
+  Correo:  string;
+  ApellidoPaterno:  string;
+  ApellidoMaterno: string;
+  IdRol:number;
+}

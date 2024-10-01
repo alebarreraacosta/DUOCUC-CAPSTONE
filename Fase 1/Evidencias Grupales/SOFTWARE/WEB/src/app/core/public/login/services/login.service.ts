@@ -9,15 +9,14 @@ import { Observable, of } from 'rxjs';
 })
 export class LoginService {
 
-  url: string = `${environment.HOST}/${environment.apiContextPath}/private`;
+  url: string = `${environment.HOST}`;
   private USERDATA = 'userData';
   constructor(private http: HttpClient) { }
-  
-
 
   login(data:LoginRequest){
-    this.url = 'http://demo7311560.mockable.io/login'
-    return this.http.post<LoginResponse>(this.url,data );
+    //TODO: RECORDAR AGREGAR Acceso/ObtenerUsuario?correo=${data.username}&contrasena=${data.password}
+    //this.url = 'http://demo7311560.mockable.io/login'
+    return this.http.get<LoginResponse>(this.url+`Acceso/ObtenerUsuario?correo=${data.username}&contrasena=${data.password}`);
   }
 
   isAuthorized(): Observable<boolean> {

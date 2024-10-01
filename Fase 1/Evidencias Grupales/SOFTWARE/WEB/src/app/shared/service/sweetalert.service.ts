@@ -17,7 +17,9 @@ export class AlertService {
         html: content == null ? '':content ,
         icon: 'error',
         confirmButtonText: confirmButtonText,
-        backdrop:false
+        backdrop:true,
+        allowOutsideClick: false, 
+        allowEscapeKey: false, 
       });
     }else{
       Swal.fire({
@@ -25,7 +27,9 @@ export class AlertService {
         html: content == null ? '':content ,
         icon: 'info',
         confirmButtonText: confirmButtonText,
-        backdrop:false
+        backdrop:true,
+        allowOutsideClick: false, 
+        allowEscapeKey: false, 
       });
     }
     

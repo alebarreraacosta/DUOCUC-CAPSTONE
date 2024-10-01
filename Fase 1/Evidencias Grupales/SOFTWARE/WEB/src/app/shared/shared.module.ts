@@ -6,12 +6,14 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { PageHeaderComponent } from './components/page-header/page-header.component';
 import { AngularMaterialModuleGD } from './angular-material.module';
+import { FormUsuarioComponent } from './components/form-usuario/form-usuario.component';
 
 
 
 @NgModule({
   declarations: [
     FormLoginComponent,
+    FormUsuarioComponent,
     SpinnerComponent,
     PageHeaderComponent,
   ],
@@ -24,6 +26,7 @@ import { AngularMaterialModuleGD } from './angular-material.module';
   exports:[
     SpinnerComponent,
     FormLoginComponent,
+    FormUsuarioComponent,
     NgxSpinnerModule,
     PageHeaderComponent,
     AngularMaterialModuleGD

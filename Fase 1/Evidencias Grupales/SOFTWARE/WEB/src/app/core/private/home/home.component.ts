@@ -47,7 +47,7 @@ export class HomeComponent implements OnInit{
   ngOnInit(): void {
     this.iconoSeleccionado = this.menuItems.filter(x => x.ruta.includes(this.router.url))[0].icon;
     let datosUser =  JSON.parse(this.sessionGlobalService.getDataUser()!) as LoginResponse ;
-    this.nombreUsuario = datosUser.nombre + ' '+datosUser.apellidoPaterno + ' '+datosUser.apellidoMaterno
+    this.nombreUsuario = datosUser.usuario?.Nombre + ' '+datosUser.usuario?.ApellidoPaterno + ' '+datosUser.usuario?.ApellidoMaterno
     
   }
 

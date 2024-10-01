@@ -7,6 +7,8 @@ import { ReportesComponent } from './reportes/reportes.component';
 import { CommonModule } from '@angular/common';
 import { AuthGuard } from '../public/guard/auth.guard';
 import { PrincipalComponent } from './principal/principal.component';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { PipeTransformsModule } from './pipe/pipe-transformers.module';
 const routes: Routes = [
 
   {
@@ -37,13 +39,17 @@ const routes: Routes = [
 @NgModule({
   declarations:[
     HomeComponent,
+    UsuariosComponent
   ],
   imports: [
     RouterModule.forChild(routes),
     CommonModule,
+    SharedModule,
+    PipeTransformsModule
   ],
   exports: [
-    RouterModule
+    RouterModule,
+    
   ]
 })
 export class PrivateRoutingModule { }

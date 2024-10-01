@@ -12,7 +12,19 @@ export class FormsReactiveService {
   crearFormularioLogin(): FormGroup {
     return this.fb.group({
       username: ['', [Validators.required, Validators.email]],  
-      password: ['', [Validators.required, Validators.minLength(6)]], 
+      password: ['', [Validators.required, Validators.minLength(3)]], 
     });
   }
+
+  crearFormularioUsuario(): FormGroup {
+    return this.fb.group({
+      nombre: ['', [Validators.required]],  
+      apellidoPaterno: ['', [Validators.required]],  
+      apellidoMaterno: ['', [Validators.required]],  
+      correo: ['', [Validators.required, Validators.email]], 
+      contrasena: ['', [Validators.required, Validators.minLength(3)]], 
+      rol: ['', [Validators.required]], 
+    });
+  }
+
 }
