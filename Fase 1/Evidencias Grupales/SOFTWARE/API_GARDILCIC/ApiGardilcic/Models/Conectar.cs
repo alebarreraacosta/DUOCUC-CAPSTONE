@@ -12,6 +12,7 @@ namespace ApiGardilcic.Models
     public class Conectar : IDisposable
     {
 
+
         public SqlConnection Conexion { get; set; }
         public SqlTransaction Transaccion { get; set; }
 
