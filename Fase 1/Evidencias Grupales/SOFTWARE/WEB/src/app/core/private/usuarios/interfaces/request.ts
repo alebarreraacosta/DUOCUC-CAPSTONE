@@ -6,3 +6,11 @@ export interface UsuarioRequest {
     apellidoMaterno: string;  
     idRol: number;            
   }
+  export interface UsuarioActualizarRequest {
+    Nombre: string;          
+    Correo: string;           
+    ApellidoPaterno: string;  
+    ApellidoMaterno: string;  
+    IdRol: number;      
+    IdUsuario:number;      
+  }

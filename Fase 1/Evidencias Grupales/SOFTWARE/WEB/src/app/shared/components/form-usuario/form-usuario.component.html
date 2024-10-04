@@ -1,6 +1,6 @@
 
 <div class="login-container">
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" >
+    <form [formGroup]="form" >
         <div class="mb-4 img-center">
             <img src="../../../../assets/img/png/user.png" alt="">
         </div>
@@ -41,8 +41,8 @@
                 <i class="material-icons">lock</i>
             </div>
             <label for="password"></label>
-            <input class="input-primary" type="password" id="contrasena" name="contrasena" formControlName="contrasena"  placeholder="Contraseña" [ngClass]="form.get('password')?.invalid  && form.get('password')?.touched ? 'input-invalid':null">
-            <p class="text-invalid" *ngIf="form.get('password')?.invalid  && form.get('password')?.touched">Este campo es invalido</p>
+            <input class="input-primary" type="password" id="contrasena" name="contrasena" autocomplete="off" formControlName="contrasena"  placeholder="Contraseña" [ngClass]="form.get('contrasena')?.invalid  && form.get('contrasena')?.touched ? 'input-invalid':null">
+            <p class="text-invalid" *ngIf="form.get('contrasena')?.invalid  && form.get('contrasena')?.touched">Este campo es invalido</p>
         </div>
 
         <div class="form-group">
@@ -55,7 +55,9 @@
             <p class="text-invalid" *ngIf="form.get('rol')?.invalid  && form.get('rol')?.touched">Este campo es invalido</p>
         </div>
         <div class="form-group">
-            <button class="btn-primary" type="submit" [disabled]="form.invalid">Crear usuario</button>
+            <button class="btn-primary" type="submit" [disabled]="form.invalid" (click)="isHabilitaActualizar ?onUpdate() :onSubmit() " >{{!isHabilitaActualizar ? 'Crear': 'Actualizar'}} Usuario</button>
+            <br><br>
+            <button class="btn-primary" *ngIf="isHabilitaActualizar" (click)="cancel()" > Cancelar</button>
         </div>
     </form>
 </div>

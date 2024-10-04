@@ -1,12 +1,13 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { SpinnerService } from 'src/app/shared/service/spinner.service';
 import { AlertService } from 'src/app/shared/service/sweetalert.service';
 import { UsuarioService } from './services/usuario.service';
-import { UsuarioRequest } from './interfaces/request';
+import { UsuarioActualizarRequest, UsuarioRequest } from './interfaces/request';
 import { UsuariosListaResponse } from './interfaces/response';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
+import { FormsReactiveService } from 'src/app/shared/service/forms-reactive.service';
 export interface StockData {
   codigoArticulo: string;
   descripcion: string;
@@ -22,38 +23,44 @@ export interface StockData {
 export class UsuariosComponent implements OnInit, AfterViewInit{
   title:string="Usuario"
   displayedColumns: string[] = ['nombre', 'correo', 'apellidoPaterno', 'apellidoMaterno', 'idRol', 'acciones'];
+  formUsuario! :FormGroup;
+  isHabilitarActualizar:boolean=false;
+  @ViewChild(MatSort) sort!: MatSort;
 
   public dataMantenedorConsumo: UsuariosListaResponse[] = [];
   public dataSource: MatTableDataSource<UsuariosListaResponse>;
 
   constructor(private spinnerService: SpinnerService,
     private alertService: AlertService,
-    private usuarioService:UsuarioService
+    private usuarioService:UsuarioService,
+    private formularioReactivo : FormsReactiveService,
+    private cdr: ChangeDetectorRef
   ) {
     this.dataSource = new MatTableDataSource(this.dataMantenedorConsumo);
-
   }
 
   ngOnInit(): void {
-    
-    this.dataSource.data = [
-      {
-        idUsuario: 1,
-        nombre: "Alejandro",
-        correo: "alejandrobarrera@gmail.com",
-        apellidoPaterno: "Barrera",
-        apellidoMaterno: "Acosta",
-        idRol: 1
-      },  {
-        idUsuario: 2,
-        nombre: "Ignacio",
-        correo: "Vasquezignacio@gmail.com",
-        apellidoPaterno: "Vasquez",
-        apellidoMaterno: "Vasquez",
-        idRol: 1
-      }
-    ]
+    this.formUsuario= this.formularioReactivo.crearFormularioUsuario();
+    this.spinnerService.showSpinner();
+    this.listarUsuario();
+  }
 
+  private listarUsuario(){
+    this.usuarioService.getListaUsuarios().subscribe({
+      next:(result)=>{
+        this.spinnerService.hideSpinner();
+        if(result){
+          this.dataSource.data = result.usuarios
+        }
+      },
+      error:(err)=>{
+        this.spinnerService.hideSpinner();
+        if(err.status>= 400 && err.status>= 599 ){
+          this.alertService.showInfoAlert('Ha ocurrido un error, al cargar lista de usuarios',"Error carga de usuarios",'Aceptar','error');
+        }
+
+      }
+    })
   }
 
   submit(form: FormGroup){
@@ -73,6 +80,7 @@ export class UsuariosComponent implements OnInit, AfterViewInit{
           this.spinnerService.hideSpinner();
           this.alertService.showInfoAlert(null, 'Usuario registrado exitosamente.', 'Aceptar', 'info');
           form.reset();
+          this.listarUsuario();
         },
         error:()=>{
           this.spinnerService.hideSpinner();
@@ -96,25 +104,88 @@ export class UsuariosComponent implements OnInit, AfterViewInit{
       
       return dataStr.includes(filter);
     };
-  
-    // Aplicar el filtro
     this.dataSource.filter = filterValue;
   }
 
   onUpdate(element: UsuariosListaResponse) {
-    
-    
+    this.formUsuario = this.formularioReactivo.crearFormularioUsuario();
+    this.isHabilitarActualizar = true;
+    this.cdr.detectChanges();
+    this.formUsuario.patchValue({
+      nombre:element.Nombre,
+      apellidoPaterno: element.ApellidoPaterno,
+      apellidoMaterno: element.ApellidoMaterno,
+      contrasena: "************",
+      rol: element.IdRol.toString(),
+      correo: element.Correo,
+      idUsuario: element.IdUsuario
+    });
   }
 
-  onEdit(element: UsuariosListaResponse) {
-    console.log('Editar para:', element.nombre);
+  actualizarUsuario(form:FormGroup){
+    let data = {
+      Nombre: form.get('nombre')?.value,
+      Correo: form.get('correo')?.value,
+      ApellidoPaterno:form.get('apellidoPaterno')?.value,
+      ApellidoMaterno:form.get('apellidoMaterno')?.value,
+      IdRol: Number(form.get('rol')?.value),
+      IdUsuario: Number(form.get('idUsuario')?.value),
+    } as UsuarioActualizarRequest;
+    this.alertService.showConfirmationAlert('¿Estás seguro que quieres actualizar los datos de este usuario?','Actualizar usuario','Actualizar','Cancelar').then(respuesta=>{
+      if(respuesta){
+        this.spinnerService.showSpinner("Actualizando datos usuario...");
+        this.usuarioService.updateUsuario(data).subscribe({
+          next:(result)=>{
+            this.isHabilitarActualizar=false;
+            this.spinnerService.hideSpinner();
+             if(result){
+              this.alertService.showInfoAlert("Usuario modificado exitosamente","Actualización usuario","Aceptar","info");
+              this.listarUsuario();
+             }else{
+              this.alertService.showInfoAlert("No se pudo actualizar usuario","Actualización usuario","Aceptar","error");
+             }
+          },
+          error:(err)=>{
+            this.spinnerService.hideSpinner();
+            this.alertService.showInfoAlert("Ha ocurrido un error intente nuevamente","Error Actualización","Aceptar","error");
+          }
+        })
+      }
+    })
   }
 
-  @ViewChild(MatSort) sort!: MatSort;
+  onDelete(element: UsuariosListaResponse) {
+    this.alertService.showConfirmationAlert('¿Estás seguro que quieres eliminar este usuario?','Eliminar usuario','Eliminar','Cancelar').then(respuesta=>{
+      const {IdUsuario,edit, ...data} = element
+      if(respuesta){
+        this.spinnerService.showSpinner("Eliminando usuario...");
+        this.usuarioService.deleteUsuario(element.IdUsuario).subscribe({
+          next:(result)=>{
+            this.spinnerService.hideSpinner();
+             if(result){
+              this.alertService.showInfoAlert("Usuario eliminado exitosamente","Eliminación Usuario","Aceptar","info");
+              this.listarUsuario();
+             }else{
+              this.alertService.showInfoAlert("No se pudo eliminar usuario","Eliminación Usuario","Aceptar","error");
+             }
+          },
+          error:(err)=>{
+            this.spinnerService.hideSpinner();
+            this.alertService.showInfoAlert("Ha ocurrido un error intente nuevamente","Error Eliminación","Aceptar","error");
+          }
+        })
+      }
+
+    })
+  }
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
   }
 
+  cancelar(){
+    this.formUsuario.get('contrasena')?.enable();
+    this.isHabilitarActualizar = false;
+  }
   
 }

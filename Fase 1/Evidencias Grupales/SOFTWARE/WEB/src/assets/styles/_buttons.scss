@@ -1,6 +1,6 @@
 @import "colors";
 
-.btn-cancel,.btn-primary{
+.btn-cancel,.btn-primary, .btn-primary-green{
     width: 100%;
     border: 0 none;
     border-radius: 10px;
@@ -27,6 +27,14 @@
     &:hover {
         background-color: $color-primary;
     }
+}
+
+.btn-primary-green{
+    background-color: $color-primary;
+}
+
+.btn-primary-green:hover{
+    background-color: $color-secondary;
 }
 
 button:disabled, button:disabled:hover{
