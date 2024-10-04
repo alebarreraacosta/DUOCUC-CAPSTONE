@@ -44,7 +44,9 @@ export class AlertService {
       showCancelButton: true,
       confirmButtonText: confirmButtonText,
       cancelButtonText: cancelButtonText,
-      backdrop:false
+      backdrop:true,
+      allowOutsideClick: false, 
+      allowEscapeKey: false, 
     }).then((result) => {
       return result.isConfirmed;  // Retorna true si se confirmó, false si se canceló
     });

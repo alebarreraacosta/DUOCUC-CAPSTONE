@@ -84,6 +84,7 @@ export class PrincipalComponent implements OnInit {
           }]
         },
         options: {
+          maintainAspectRatio: false, 
           scales: {
             y: {
               beginAtZero: true
@@ -135,6 +136,7 @@ export class PrincipalComponent implements OnInit {
           }]
         },
         options: {
+          maintainAspectRatio: false, 
           scales: {
             y: {
               beginAtZero: true
@@ -187,6 +189,7 @@ export class PrincipalComponent implements OnInit {
           }]
         },
         options: {
+          maintainAspectRatio: false, 
           scales: {
             y: {
               beginAtZero: true
@@ -276,7 +279,6 @@ export class PrincipalComponent implements OnInit {
     }
 
     private destructuraDataParaGraficoProducto(datos:GraficoProductoResponse[]): {'labels':string[],'data':number[], 'descripcion':{"precioUnitario":number,"total":number}[]}{
-      console.log(datos);
       let labels = datos.map(x => x.mes);
       let data = datos.map(x => x.cantidad); 
       let descripción = datos.map(x => {

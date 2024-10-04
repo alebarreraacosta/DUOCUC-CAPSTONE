@@ -78,7 +78,11 @@
             },
             "development": {
               "browserTarget": "web-control-inv-gardilcic:build:development"
+
             }
+          },
+          "options": {
+            "proxyConfig": "proxy.conf.json"
           },
           
           "defaultConfiguration": "development"

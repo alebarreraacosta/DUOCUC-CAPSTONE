@@ -18,11 +18,12 @@ export class FormsReactiveService {
 
   crearFormularioUsuario(): FormGroup {
     return this.fb.group({
-      nombre: ['', [Validators.required]],  
-      apellidoPaterno: ['', [Validators.required]],  
-      apellidoMaterno: ['', [Validators.required]],  
+      idUsuario:[''],
+      nombre: ['', [Validators.required, Validators.minLength(2)]],  
+      apellidoPaterno: ['', [Validators.required,Validators.minLength(2)]],  
+      apellidoMaterno: ['', [Validators.required,Validators.minLength(2)]],  
       correo: ['', [Validators.required, Validators.email]], 
-      contrasena: ['', [Validators.required, Validators.minLength(3)]], 
+      contrasena: ['', [Validators.required, Validators.minLength(2)]], 
       rol: ['', [Validators.required]], 
     });
   }

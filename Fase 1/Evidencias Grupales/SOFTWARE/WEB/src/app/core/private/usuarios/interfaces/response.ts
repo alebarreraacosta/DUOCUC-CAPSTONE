@@ -1,9 +1,14 @@
 export interface UsuariosListaResponse{
-    nombre:string;
-    apellidoPaterno:string;
-    apellidoMaterno:string;
-    correo:string;
-    idRol:number;
-    idUsuario:number;
+    IdUsuario: number;
+    Nombre: string;
+    Correo: string;
+    ApellidoPaterno: string;
+    ApellidoMaterno: string;
+    IdRol: number;
     edit?:boolean
+}
+
+export interface UsuariosResponse{
+    exito: boolean
+    usuarios: UsuariosListaResponse[]
 }

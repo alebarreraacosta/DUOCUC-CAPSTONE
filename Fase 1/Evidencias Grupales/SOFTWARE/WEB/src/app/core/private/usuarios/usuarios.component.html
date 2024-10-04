@@ -1,7 +1,7 @@
 
 <app-page-header [pageTitle]="title"></app-page-header>
 <div class="ajust-from-usuario">
-    <app-form-usuario (formSubmitted)="submit($event)"></app-form-usuario>
+    <app-form-usuario (formSubmitted)="submit($event)" (formUpdate)="actualizarUsuario($event)" [form]="formUsuario" [isHabilitaActualizar]="isHabilitarActualizar" (cancelar)="cancelar()"></app-form-usuario>
 </div>
 
 <div style="padding: 20px 20px 20px 0px; ">
@@ -11,39 +11,42 @@
       <!-- Nombre columna -->
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
-        <td mat-cell *matCellDef="let element">{{ element.nombre }}</td>
+        <td mat-cell *matCellDef="let element">{{ element.Nombre }}</td>
       </ng-container>
   
       <!-- Correo columna -->
       <ng-container matColumnDef="correo">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Correo</th>
-        <td mat-cell *matCellDef="let element">{{ element.correo }}</td>
+        <td mat-cell *matCellDef="let element">{{ element.Correo }}</td>
       </ng-container>
   
       <!-- Apellido Paterno columna -->
       <ng-container matColumnDef="apellidoPaterno">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Apellido Paterno</th>
-        <td mat-cell *matCellDef="let element">{{ element.apellidoPaterno }}</td>
+        <td mat-cell *matCellDef="let element">{{ element.ApellidoPaterno }}</td>
       </ng-container>
   
       <!-- Apellido Materno columna -->
       <ng-container matColumnDef="apellidoMaterno">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Apellido Materno</th>
-        <td mat-cell *matCellDef="let element">{{ element.apellidoMaterno }}</td>
+        <td mat-cell *matCellDef="let element">{{ element.ApellidoMaterno }}</td>
       </ng-container>
   
       <!-- Rol columna -->
       <ng-container matColumnDef="idRol">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Rol</th>
-        <td mat-cell *matCellDef="let element">{{ element.idRol | convertRolString }}</td>
+        <td mat-cell *matCellDef="let element">{{ element.IdRol | convertRolString }}</td>
       </ng-container>
   
       <!-- Acciones columna -->
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef>Acciones</th>
         <td mat-cell *matCellDef="let element">
-          <button mat-raised-button color="primary" (click)="onUpdate(element)">Actualizar</button>
-          <button mat-raised-button color="accent" (click)="onEdit(element)">Editar</button>
+          <div style="display: flex;">
+            <button class="btn-primary-green mr-2" (click)="onUpdate(element)">Actualizar</button>
+            <button  class="btn-cancel ml-2" (click)="onDelete(element)">Eliminar</button>
+          </div>
+    
         </td>
       </ng-container>
   
