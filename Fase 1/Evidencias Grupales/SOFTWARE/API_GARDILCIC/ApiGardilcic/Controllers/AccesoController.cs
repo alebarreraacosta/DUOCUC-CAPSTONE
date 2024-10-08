@@ -2,6 +2,7 @@
 using System.Net;
 using System;
 using System.Web.Mvc;
+using System.Collections.Generic;
 
 namespace ApiGardilcic.Controllers
 {
@@ -9,7 +10,7 @@ namespace ApiGardilcic.Controllers
     {
         Acceso acceso = new Acceso();
 
-        // Método para obtener y validar usuario (simulación de login)
+        // Método GET para obtener y validar usuario
         public JsonResult ObtenerUsuario(string correo, string contrasena)
         {
             try
@@ -37,7 +38,7 @@ namespace ApiGardilcic.Controllers
             }
         }
 
-        // Método para crear un nuevo usuario
+        // Método POST para crear un nuevo usuario
         public JsonResult CrearUsuario(string nombre, string correo, string contrasena, string apellidoPaterno, string apellidoMaterno, int idRol)
         {
             try
@@ -65,13 +66,13 @@ namespace ApiGardilcic.Controllers
             }
         }
 
-        // Método para actualizar un usuario
-        public JsonResult ActualizarUsuario(int idUsuario, string nombre, string correo, string apellidoPaterno, string apellidoMaterno, int idRol)
+        // Método PUT para actualizar un usuario
+        public JsonResult ActualizarUsuario(int IdUsuario, string Nombre, string Correo, string ApellidoPaterno, string ApellidoMaterno, int IdRol)
         {
             try
             {
                 // Intentar actualizar el usuario usando los parámetros directamente
-                bool actualizado = acceso.ActualizarUsuario(idUsuario, nombre, correo, apellidoPaterno, apellidoMaterno, idRol);
+                bool actualizado = acceso.ActualizarUsuario(IdUsuario, Nombre, Correo, ApellidoPaterno, ApellidoMaterno, IdRol);
 
                 if (actualizado)
                 {
@@ -94,13 +95,13 @@ namespace ApiGardilcic.Controllers
             }
         }
 
-        // Método para eliminar un usuario
-        public JsonResult EliminarUsuario(int idUsuario)
+        // Método DELETE para eliminar un usuario
+        public JsonResult EliminarUsuario(int IdUsuario)
         {
             try
             {
                 // Intentar eliminar el usuario
-                bool eliminado = acceso.EliminarUsuario(idUsuario);
+                bool eliminado = acceso.EliminarUsuario(IdUsuario);
 
                 if (eliminado)
                 {
@@ -118,6 +119,35 @@ namespace ApiGardilcic.Controllers
             catch (Exception ex)
             {
                 // Devolver error interno si ocurrió una excepción
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return Json(new { exito = false, mensaje = $"Error interno: {ex.Message}" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        // Método GET para listar todos los usuarios
+        public JsonResult ListarUsuarios()
+        {
+            try
+            {
+                // Obtener todos los usuarios desde el modelo
+                List<UsuarioModel> listaUsuarios = acceso.ObtenerUsuarios();
+
+                if (listaUsuarios.Count > 0)
+                {
+                    // Devolver 200 OK con la lista de usuarios
+                    Response.StatusCode = (int)HttpStatusCode.OK;
+                    return Json(new { exito = true, usuarios = listaUsuarios }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    // Devolver 404 Not Found si no se encontraron usuarios
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Json(new { exito = false, mensaje = "No se encontraron usuarios." }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Devolver 500 Internal Server Error si ocurrió una excepción
                 Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 return Json(new { exito = false, mensaje = $"Error interno: {ex.Message}" }, JsonRequestBehavior.AllowGet);
             }
