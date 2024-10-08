@@ -1,0 +1,60 @@
+@import "../../../../assets/styles/_colors.scss";
+
+.header-img{
+    padding: 20px 0px 10px 30px;
+}
+
+.container-login{
+    height: 100vh;
+    background-image: url('../../../../assets/img/png/fondo-login.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+}
+.title-center{
+    text-align: center;
+    color: $white;
+}
+
+.form-container{
+    display: flex;
+    justify-content: center;
+}
+
+.h1-font-size-40{
+    font-size: 40px;
+}
+
+
+/* Estilos para pantallas muy pequeñas (móviles antiguos) */
+@media (max-width: 575.98px) {
+
+    .header-img{
+        img{
+            width: 182px;
+        }
+    }
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .header-img{
+        img{
+            width: 184px;
+        }
+    }
+}
+
+/* Estilos para tabletas y móviles grandes */
+@media (min-width: 768px) and (max-width: 991.98px) {
+
+}
+
+/* Estilos para pantallas medianas (laptops pequeñas) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+
+}
+
+/* Estilos para pantallas grandes (desktops grandes) */
+@media (min-width: 1200px) {
+
+}

@@ -1,0 +1,110 @@
+@import "../../../../assets/styles/colors";
+
+.login-container{
+    padding: 20px;
+    background-color: $white;
+    border-radius: 10px;
+    .img-center{
+        text-align: center;
+    }
+}
+
+.form-group{
+    position: relative;
+    width: 100%;
+    margin-bottom: 10px;
+    .circle-icon{
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        border-radius: 80%;
+        background-color: $grey;
+        padding-top: 4px;
+        padding-left: 4px;
+        margin-top: 6px;
+        margin-left: 5px;
+    }
+    i {
+        position: absolute;
+        font-size: 21px;
+        color: #fbfbfb;
+    }
+ 
+}
+
+/* Ajustar el estilo del mat-select */
+::ng-deep .mat-form-field {
+    width: 100% !important; 
+  }
+  
+  ::ng-deep .mat-form-field-wrapper {
+    padding-bottom: 0px;
+  }
+  
+  ::ng-deep .mat-select-placeholder {
+    color: #888;
+    font-size: 16px;
+  }
+  
+  ::ng-deep .mat-select-value {
+    color: #333;
+    font-size: 16px;
+  }
+  
+  ::ng-deep .mat-select-arrow {
+    color: #888;
+  }
+  
+  ::ng-deep .mat-select-panel {
+    border-radius: 8px;
+    background-color: #fff;
+  }
+  
+  ::ng-deep .mat-option {
+    font-size: 16px;
+    color: #333;
+  }
+  
+  ::ng-deep .mat-option:hover {
+    background-color: #e0e0e0;
+  }
+  
+  ::ng-deep .mat-select-panel .mat-option.mat-selected {
+    background-color: #d1d1d1;
+    color: #000;
+  }
+  
+
+
+::ng-deep .mat-mdc-option.mdc-list-item--selected:not(.mdc-list-item--disabled) .mdc-list-item__primary-text {
+    color: $color-secondary !important;
+}
+
+::ng-deep .mat-primary .mat-pseudo-checkbox-checked.mat-pseudo-checkbox-minimal::after, .mat-primary .mat-pseudo-checkbox-indeterminate.mat-pseudo-checkbox-minimal::after {
+    color: $color-secondary !important;
+}
+
+
+/* Estilos para pantallas muy pequeñas (móviles antiguos) */
+@media (max-width: 575.98px) {
+    
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+    
+}
+
+/* Estilos para tabletas y móviles grandes */
+@media (min-width: 768px) and (max-width: 991.98px) {
+
+}
+
+/* Estilos para pantallas medianas (laptops pequeñas) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+
+}
+
+/* Estilos para pantallas grandes (desktops grandes) */
+@media (min-width: 1200px) {
+
+}

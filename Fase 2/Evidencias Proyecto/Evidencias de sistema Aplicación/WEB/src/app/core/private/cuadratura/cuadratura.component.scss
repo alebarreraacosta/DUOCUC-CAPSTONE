@@ -1,0 +1,108 @@
+@import '../../../../assets/styles/colors';
+
+.contenedor-busqueda{
+    display: flex;
+    background-color: #fff;
+    padding: 20px;
+}
+
+
+.ajust-input-search{
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+
+.completed-status,.incomplete-status{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.group-contenedor{
+    border-radius: 10px;
+    background-color: #fff;
+    padding: 10px;
+}
+
+.no-data-row{
+    padding: 15px;
+}
+  
+th,td{
+    text-align: center;
+}
+
+
+
+
+.completado,.incompletado{
+    display: flex;
+    border-radius: 20px;
+    align-items: center;
+    padding: 0px 1px 0px 1px;
+}
+
+.completado{
+    background-color: #02883394 !important;
+    color: #1c6321;
+    
+}
+
+.incompletado{
+    background-color: #ff3131a6 !important;
+    color: #db0303;
+}
+
+
+
+::ng-deep .table-container {
+    width: 100%;
+    overflow: auto;
+    border-radius: 10px;
+}
+
+::ng-deep  .mat-mdc-table{
+    background-color: #fff !important;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+
+::ng-deep .mat-mdc-table {
+    width: 100%;
+    border-collapse: collapse; 
+}
+  
+::ng-deep .mat-mdc-header-cell, 
+::ng-deep .mat-mdc-cell {
+    border: 1px solid #ccc !important; 
+    padding: 8px; 
+    color: black;
+}
+
+::ng-deep mat-paginator {
+    background-color:  #fff !important;
+    color: black !important;
+  }
+
+::ng-deep .mat-mdc-paginator-icon{
+    fill: black !important;
+}
+
+::ng-deep .mat-mdc-paginator-navigation-first[disabled] .mat-mdc-paginator-icon,
+::ng-deep .mat-mdc-paginator-navigation-previous[disabled] .mat-mdc-paginator-icon,
+::ng-deep .mat-mdc-paginator-navigation-next[disabled] .mat-mdc-paginator-icon,
+::ng-deep .mat-mdc-paginator-navigation-last[disabled] .mat-mdc-paginator-icon {
+    fill: #cccccc !important;  
+    opacity: 1 !important;
+}
+
+::ng-deep .mat-mdc-tooltip-disabled:disabled{
+    background-color: #fff !important;
+}
+
+
+::ng-deep mat-icon{
+    margin-left: 3px;
+}

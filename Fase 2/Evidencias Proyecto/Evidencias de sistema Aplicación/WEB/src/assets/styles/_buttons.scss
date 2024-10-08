@@ -1,0 +1,42 @@
+@import "colors";
+
+.btn-cancel,.btn-primary, .btn-primary-green{
+    width: 100%;
+    border: 0 none;
+    border-radius: 10px;
+    font-size: 13px;
+    text-align: center;
+    padding: 7px;
+    color: $white;
+    &:hover {
+        cursor: pointer;
+        transition: 1s;
+    }
+}
+
+.btn-primary{
+    background-color: $color-secondary;
+    &:hover {
+        background-color: $color-primary;
+    }
+}
+
+.btn-cancel{
+    background-color: $red;
+    padding: 7px;
+    &:hover {
+        background-color: $color-primary;
+    }
+}
+
+.btn-primary-green{
+    background-color: $color-primary;
+}
+
+.btn-primary-green:hover{
+    background-color: $color-secondary;
+}
+
+button:disabled, button:disabled:hover{
+    background-color: #e0e0e0;
+}

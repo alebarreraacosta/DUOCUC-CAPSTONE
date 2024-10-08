@@ -1,0 +1,80 @@
+@import "colors";
+.input-primary {
+    width: 100%;
+    padding: 10px 10px 10px 40px; 
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    background-color: #e0e0e0;
+    color: #777;
+    font-size: 14px;
+    outline: none;
+    &::placeholder {
+        color: #999; 
+    }
+   
+}
+
+.input-invalid{ 
+   border: 2px solid $red !important;
+}
+
+.search-box {
+    position: relative;
+    width: 300px;
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    width: 100%;
+    padding: 8px 40px 8px 8px; 
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 10px; 
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: #999; 
+}
+
+.search-icon {
+    position: absolute;
+    right: 10px;
+    top: 45%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: #999;
+    pointer-events: none; 
+}
+
+
+@media (max-width: 575.98px) {
+
+    .input-primary {
+        padding: 5px 5px 5px 39px; 
+    }
+
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .input-primary {
+        padding: 6px 6px 6px 39px; 
+    }
+}
+
+/* Estilos para tabletas y móviles grandes */
+@media (min-width: 768px) and (max-width: 991.98px) {
+
+}
+
+/* Estilos para pantallas medianas (laptops pequeñas) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+
+}
+
+/* Estilos para pantallas grandes (desktops grandes) */
+@media (min-width: 1200px) {
+
+}
+
