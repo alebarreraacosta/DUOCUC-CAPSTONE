@@ -9,6 +9,7 @@ import { AuthGuard } from '../public/guard/auth.guard';
 import { PrincipalComponent } from './principal/principal.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PipeTransformsModule } from './pipe/pipe-transformers.module';
+import { CuadraturaDiferenciasComponent } from './cuadratura/cuadratura-diferencias/cuadratura-diferencias.component';
 const routes: Routes = [
 
   {
@@ -22,6 +23,10 @@ const routes: Routes = [
       {
         path: 'cuadratura',
         component: CuadraturaComponent
+      },
+      {
+        path: 'cuadratura-detalle',
+        component: CuadraturaDiferenciasComponent
       },
       {
         path: 'usuarios',
@@ -39,7 +44,9 @@ const routes: Routes = [
 @NgModule({
   declarations:[
     HomeComponent,
-    UsuariosComponent
+    UsuariosComponent,
+    CuadraturaComponent,
+    CuadraturaDiferenciasComponent
   ],
   imports: [
     RouterModule.forChild(routes),

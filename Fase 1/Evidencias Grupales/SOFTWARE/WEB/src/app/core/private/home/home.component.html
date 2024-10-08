@@ -1,24 +1,27 @@
-<div class="sidebar">
-    <div class="logo">
-        <img src="../../../../assets/img/png/logo-solo.jpg" alt="Logo" />
+<div class="layout">
+    <div class="sidebar">
+        <div class="logo">
+            <img src="../../../../assets/img/png/logo-solo.jpg" alt="Logo" />
+        </div>
+        <ul class="menu" >
+            <li *ngFor="let menu of menuItems" (click)="goTo(menu.icon ,menu.ruta)">
+                <i class="material-icons" [ngClass]="iconoSeleccionado == menu.icon ? 'selected': null">{{menu.icon}}</i>
+                <span [ngClass]="iconoSeleccionado == menu.icon ? 'selected': null" >{{menu.descripcion}}</span>
+            </li>
+           
+        </ul>
     </div>
-    <ul class="menu" >
-        <li *ngFor="let menu of menuItems" (click)="goTo(menu.icon ,menu.ruta)">
-            <i class="material-icons" [ngClass]="iconoSeleccionado == menu.icon ? 'selected': null">{{menu.icon}}</i>
-            <span [ngClass]="iconoSeleccionado == menu.icon ? 'selected': null" >{{menu.descripcion}}</span>
-        </li>
-       
-    </ul>
-</div>
-<div class="header">
-    <div class="user-section">
-        <i class="material-icons">account_circle</i>
-        <span>{{nombreUsuario}}</span>
-        <a (click)="cerrarSesion()">Cerrar Sesión</a>
-    </div>
-</div>
-<div class="body-content">
     <div class="content">
-        <router-outlet></router-outlet>
+        <div class="header">
+            <div class="user-section">
+                <i class="material-icons">account_circle</i>
+                <span class="margin-left-10px">{{nombreUsuario}}</span>
+                <a class="margin-left-10px close-session" (click)="cerrarSesion()">Cerrar Sesión</a>
+            </div>
+        </div>
+        <div class="main-content">
+            <router-outlet></router-outlet>
+        </div>
     </div>
 </div>
+

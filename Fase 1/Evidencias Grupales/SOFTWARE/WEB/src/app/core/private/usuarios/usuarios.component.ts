@@ -8,13 +8,7 @@ import { UsuariosListaResponse } from './interfaces/response';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { FormsReactiveService } from 'src/app/shared/service/forms-reactive.service';
-export interface StockData {
-  codigoArticulo: string;
-  descripcion: string;
-  unidadMedida: string;
-  stockSap: number;
-  stockBodega: number;
-}
+
 @Component({
   selector: 'app-usuarios',
   templateUrl: './usuarios.component.html',

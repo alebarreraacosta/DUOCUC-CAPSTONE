@@ -11,12 +11,41 @@
     &::placeholder {
         color: #999; 
     }
-
    
 }
 
 .input-invalid{ 
    border: 2px solid $red !important;
+}
+
+.search-box {
+    position: relative;
+    width: 300px;
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    width: 100%;
+    padding: 8px 40px 8px 8px; 
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 10px; 
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: #999; 
+}
+
+.search-icon {
+    position: absolute;
+    right: 10px;
+    top: 45%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: #999;
+    pointer-events: none; 
 }
 
 

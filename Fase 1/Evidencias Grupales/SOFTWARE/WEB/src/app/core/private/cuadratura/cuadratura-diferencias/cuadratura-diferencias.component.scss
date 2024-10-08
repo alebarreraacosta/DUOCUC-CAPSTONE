@@ -1,0 +1,64 @@
+.contenedor-busqueda{
+    display: flex;
+    background-color: #fff;
+    padding: 20px;
+}
+
+
+.ajust-input-search{
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+
+.contenedor-detalle{
+    background-color: #fff;
+    margin-bottom: 30px;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+
+.item-inventario{
+    width: 33.3%;
+    text-align: center;
+    
+}
+
+.group-contenedor{
+    border-radius: 10px;
+    background-color: #fff;
+    padding: 10px;
+}
+
+th,td{
+    text-align: center;
+}
+
+.text-color-red{
+    color: red !important;
+}
+
+::ng-deep .table-container {
+    width: 100%;
+    overflow: auto;
+}
+
+::ng-deep  .mat-mdc-table{
+    background-color: #fff !important;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+
+::ng-deep .mat-mdc-table {
+    width: 100%;
+    border-collapse: collapse; 
+}
+  
+::ng-deep .mat-mdc-header-cell, 
+::ng-deep .mat-mdc-cell {
+    border: 1px solid #ccc !important; 
+    padding: 8px; 
+    color: black;
+}
