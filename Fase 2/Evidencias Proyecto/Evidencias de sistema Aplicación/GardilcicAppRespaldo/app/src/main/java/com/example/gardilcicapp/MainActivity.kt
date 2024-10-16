@@ -1,7 +1,6 @@
 package com.example.gardilcicapp
 
 import ImportScreen
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,6 +15,9 @@ import androidx.navigation.navArgument
 import com.example.gardilcicapp.ui.screens.LoginScreen
 import com.example.gardilcicapp.ui.theme.GardilcicAppTheme
 import inventoryScreen
+import com.example.gardilcicapp.data.database.MyDatabaseHelper
+
+// Importar la nueva pantalla
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +47,6 @@ fun AppNavigation(navController: NavHostController) {
         composable("import") {
             ImportScreen(navController = navController, usuarioNombre = usuarioNombre, usuarioApellidoPaterno = usuarioApellidoPaterno) { data ->
                 excelData = data // Guardamos los datos del Excel cuando se selecciona
-               // navController.navigate("inventoryScreen/${Uri.encode(data.firstOrNull()?.firstOrNull() ?: "Archivo Excel")}")
             }
         }
         composable(
@@ -62,6 +63,32 @@ fun AppNavigation(navController: NavHostController) {
             )
         }
 
+        // Agregamos la nueva pantalla InventoryOptionsScreen
+        composable("inventoryOptionsScreen") {
+            InventoryOptionsScreen(
+                navController = navController,
+                usuarioNombre = usuarioNombre,
+                usuarioApellidoPaterno = usuarioApellidoPaterno,
+                dbHelper = MyDatabaseHelper(LocalContext.current)
+            )
+        }
+
+        composable("scanProduct") {
+            ScanProductScreen(
+                navController = navController,
+                dbHelper = MyDatabaseHelper(LocalContext.current), // Asegúrate de pasar el contexto
+                onScanResult = { scannedCode ->
+                    // Aquí puedes manejar el resultado del escaneo
+                    // Por ejemplo, puedes mostrar un mensaje o navegar a otra pantalla
+                }
+            )
+        }
+
+        composable("BarcodeScannerScreen") {
+            BarcodeScannerScreen(navController = navController, dbHelper = MyDatabaseHelper(LocalContext.current))
+        }
+
     }
 }
+
 

@@ -152,6 +152,7 @@ fun inventoryScreen(
                 Button(
                     onClick = {
                         showExcelDataDialog = true // Mostrar el diálogo con el mensaje de estado de la lectura del Excel
+
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF7300)),
                     shape = RoundedCornerShape(50),
@@ -191,6 +192,7 @@ fun inventoryScreen(
                     Text("Datos no leídos correctamente")
                 } else {
                     Text("Archivo Excel leído correctamente")
+                    navController.navigate("inventoryOptionsScreen")
                 }
             },
             confirmButton = {

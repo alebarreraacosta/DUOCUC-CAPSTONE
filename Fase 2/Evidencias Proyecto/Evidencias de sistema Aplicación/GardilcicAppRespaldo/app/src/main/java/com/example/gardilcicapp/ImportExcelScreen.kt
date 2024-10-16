@@ -1,5 +1,7 @@
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,26 +24,37 @@ import kotlinx.coroutines.launch
 import com.example.gardilcicapp.R
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import com.example.gardilcicapp.data.database.MyDatabaseHelper
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import java.io.InputStream
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun ImportScreen(
     navController: NavHostController,
-    usuarioNombre: String, // Recibir el nombre del usuario
-    usuarioApellidoPaterno: String, // Recibir el apellido paterno del usuario
+    usuarioNombre: String,
+    usuarioApellidoPaterno: String,
     onExcelDataRead: (List<List<String>>) -> Unit
 ) {
-
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var showLogoutDialog by remember { mutableStateOf(false) }
     var isFileSelected by remember { mutableStateOf(false) }
     var selectedFileUri by remember { mutableStateOf<Uri?>(null) }
-    var selectedFileName by remember { mutableStateOf("") } // Nombre completo del archivo, incluyendo la extensión
+    var selectedFileName by remember { mutableStateOf("") }
     var excelData by remember { mutableStateOf<List<List<String>>?>(null) }
+    var showDialog by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }  // Para manejar la animación de carga
+    var showSuccessDialog by remember { mutableStateOf(false) }  // Para mostrar éxito o error
+    var successMessage by remember { mutableStateOf("") }  // Mensaje para mostrar en el diálogo
 
     val context = LocalContext.current
+    val dbHelper = MyDatabaseHelper(context)
+
+    // Obtener la fecha actual
+    val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
 
     // File picker launcher
     val excelPickerLauncher = rememberLauncherForActivityResult(
@@ -49,13 +62,59 @@ fun ImportScreen(
     ) { uri: Uri? ->
         selectedFileUri = uri
         uri?.let {
-            // Obtener el nombre completo del archivo (incluyendo la extensión)
+            // Obtener el nombre completo del archivo
             selectedFileName = getFileNameFromUri(context, it) ?: "Archivo Excel"
             isFileSelected = true
             excelData = readExcelFileFromUri(context, it)
 
-            // Aquí pasamos los datos leídos al MainActivity
-            onExcelDataRead(excelData ?: emptyList()) // Guardar los datos pero no cambiar de pantalla todavía.
+            // Mostrar animación de carga mientras se procesan los datos
+            isLoading = true
+
+            // Procesar datos del Excel en la base de datos
+            scope.launch {
+                try {
+                    dbHelper.truncateInventarioSAP()
+
+                    excelData?.drop(1)?.forEach { rowData -> // drop(1) para ignorar la cabecera
+                        if (rowData.size >= 8) {
+                            val idInventario = rowData[0].toIntOrNull() ?: 0
+                            val numeroArticulo = rowData[1]
+                            val descripcionArticulo = rowData[2]
+                            val unidadMedida = rowData[3]
+                            val stockAlmacen = rowData[4].toIntOrNull() ?: 0
+                            val precioUnitario = rowData[5].toFloatOrNull() ?: 0.0f
+                            val saldoAlmacen = rowData[6].toIntOrNull() ?: 0
+                            val codigoBarras = rowData[7]
+                            val codigoAlmacen = rowData[8]
+
+                            val result = dbHelper.insertInventarioSAP(
+                                idInventario = idInventario,
+                                numeroArticulo = numeroArticulo,
+                                descripcionArticulo = descripcionArticulo,
+                                unidadMedida = unidadMedida,
+                                stockAlmacen = stockAlmacen,
+                                precioUnitario = precioUnitario,
+                                saldoAlmacen = saldoAlmacen,
+                                codigoBarras = codigoBarras,
+                                codigoAlmacen = codigoAlmacen,
+                                fechaCarga = currentDate
+                            )
+
+                            if (result == -1L) {
+                                throw Exception("Error al insertar los datos")
+                            }
+                        }
+                    }
+                    // Si todo fue exitoso
+                    successMessage = "Datos insertados correctamente"
+                } catch (e: Exception) {
+                    successMessage = "Error al insertar datos: ${e.message}"
+                } finally {
+                    isLoading = false  // Ocultar el indicador de carga
+                    showSuccessDialog = true  // Mostrar el mensaje de éxito o error
+                }
+            }
+            onExcelDataRead(excelData ?: emptyList())
         } ?: run {
             Toast.makeText(context, "Error al seleccionar el archivo", Toast.LENGTH_SHORT).show()
         }
@@ -92,7 +151,7 @@ fun ImportScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "$usuarioNombre $usuarioApellidoPaterno", // Mostrar nombre completo
+                            text = "$usuarioNombre $usuarioApellidoPaterno",
                             color = Color.White,
                             fontSize = 18.sp
                         )
@@ -176,7 +235,6 @@ fun ImportScreen(
                 Button(
                     onClick = {
                         if (selectedFileName.isNotEmpty()) {
-                            // Navegamos a la pantalla de inventario con los datos leídos y el nombre del archivo
                             navController.navigate("inventoryScreen/${Uri.encode(selectedFileName)}")
                         }
                     },
@@ -187,9 +245,45 @@ fun ImportScreen(
                 ) {
                     Text("Comenzar inventario", color = Color.White, fontSize = 20.sp)
                 }
+
+                Button(
+                    onClick = { showDialog = true },
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Text("Mostrar Inventario")
+                }
+
+                // Mostrar el diálogo solo si showDialog es true
+                if (showDialog) {
+                    showInventoryDataDialog(context, dbHelper) {
+                        showDialog = false
+                    }
+                }
+
+                // Mostrar animación de carga si isLoading es true
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        color = Color(0xFFFF7300),
+                        modifier = Modifier.size(60.dp)
+                    )
+                }
             }
         }
     )
+
+    // Mostrar el éxito o error en un diálogo emergente
+    if (showSuccessDialog) {
+        AlertDialog(
+            onDismissRequest = { showSuccessDialog = false },
+            title = { Text("Resultado de la operación") },
+            text = { Text(successMessage) },
+            confirmButton = {
+                Button(onClick = { showSuccessDialog = false }, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF7300)),) {
+                    Text("Aceptar", color = Color.White)
+                }
+            }
+        )
+    }
 
     if (showLogoutDialog) {
         AlertDialog(
@@ -209,15 +303,15 @@ fun ImportScreen(
             },
             dismissButton = {
                 Button(
-                    onClick = { showLogoutDialog = false },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF006400))
-                ) {
+                    onClick = { showLogoutDialog = false }) {
                     Text("No")
                 }
             }
         )
     }
 }
+
+
 
 // Función para obtener el nombre del archivo desde su URI
 fun getFileNameFromUri(context: Context, uri: Uri): String? {
@@ -231,15 +325,21 @@ fun getFileNameFromUri(context: Context, uri: Uri): String? {
     return fileName
 }
 
-// Función para leer el archivo Excel
 fun readExcelFileFromUri(context: Context, uri: Uri): List<List<String>> {
     val data = mutableListOf<List<String>>()
 
     try {
         val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
         val workbook = WorkbookFactory.create(inputStream)
-        val sheet = workbook.getSheetAt(0)
 
+        // Selecciona la hoja "FORMATO_CARGA_MANUAL"
+        val sheet = workbook.getSheet("Hoja1")
+        if (sheet == null) {
+            Log.e("ExcelError", "No se encontró la hoja FORMATO_CARGA_MANUAL")
+            return emptyList()
+        }
+
+        // Procesa las filas de la hoja seleccionada
         for (row in sheet) {
             val rowData = mutableListOf<String>()
             for (cell in row) {
@@ -248,7 +348,13 @@ fun readExcelFileFromUri(context: Context, uri: Uri): List<List<String>> {
                         rowData.add(cell.stringCellValue)
                     }
                     org.apache.poi.ss.usermodel.CellType.NUMERIC -> {
-                        rowData.add(cell.numericCellValue.toString())
+                        if (cell.numericCellValue % 1 == 0.0) {
+                            // Si es un número entero
+                            rowData.add(cell.numericCellValue.toInt().toString())
+                        } else {
+                            // Si es un número decimal
+                            rowData.add(cell.numericCellValue.toString())
+                        }
                     }
                     else -> {
                         rowData.add("Unknown")
@@ -262,4 +368,63 @@ fun readExcelFileFromUri(context: Context, uri: Uri): List<List<String>> {
         e.printStackTrace()
     }
     return data
+}
+
+
+
+@SuppressLint("CoroutineCreationDuringComposition")
+@Composable
+fun showInventoryDataDialog(
+    context: Context,
+    dbHelper: MyDatabaseHelper,
+    onDismissRequest: () -> Unit
+) {
+    val scope = rememberCoroutineScope()
+
+    var showDialog by remember { mutableStateOf(false) }
+    var inventoryText by remember { mutableStateOf("") }
+
+    // Consulta los datos de la tabla Inventario_SAP
+    scope.launch {
+        val inventarios = dbHelper.getAllInventarios()
+
+        // Construir el mensaje que se mostrará en el AlertDialog
+        inventoryText = inventarios.joinToString(separator = "\n") { inventario ->
+            "ID: ${inventario["id_inventario_sap"]}, " +
+                    "Artículo: ${inventario["numero_articulo"]}, " +
+                    "Descripción: ${inventario["descripcion_articulo"]}, " +
+                    "Stock: ${inventario["stock_almacen"]}, " +
+                    "Precio: ${inventario["precio_unitario"]}, " +
+                    "Saldo: ${inventario["saldo_almacen"]}, " +
+                    "Codigo: ${inventario["codigo_barras"]}"
+
+        }
+
+        showDialog = true
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showDialog = false
+                onDismissRequest()
+            },
+            title = {
+                Text(text = "Datos del Inventario")
+            },
+            text = {
+                Text(text = inventoryText)
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDialog = false
+                        onDismissRequest()
+                    }
+                ) {
+                    Text("OK")
+                }
+            }
+        )
+    }
 }

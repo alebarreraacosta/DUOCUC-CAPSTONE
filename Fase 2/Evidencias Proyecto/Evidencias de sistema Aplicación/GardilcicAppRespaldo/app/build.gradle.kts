@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    kotlin("kapt")
 }
 
 android {
@@ -66,6 +67,13 @@ dependencies {
     implementation(libs.retrofit.gson)
     implementation(libs.coroutines.android)
 
+
+    // Room dependencies
+    val room_version = "2.5.0"
+    implementation("androidx.room:room-runtime:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+    implementation( "androidx.room:room-ktx:2.4.0")
+
     // Apache POI para leer archivos Excel
     implementation(libs.apache.poi)
 
@@ -77,5 +85,29 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+
+    // escaneo y uso de la camara
+    implementation("com.google.mlkit:barcode-scanning:17.0.3")
+
+
+
+    // ML Kit Barcode Scanning
+    implementation ("com.google.mlkit:barcode-scanning:17.0.2")
+
+// CameraX Core
+    implementation ("androidx.camera:camera-core:1.1.0")
+    implementation ("androidx.camera:camera-camera2:1.1.0")
+    implementation ("androidx.camera:camera-lifecycle:1.1.0")
+    implementation ("androidx.camera:camera-view:1.1.0")
+
+// CameraX View
+    implementation ("androidx.camera:camera-view:1.1.0-alpha10")
+
+    // Si necesitas compatibilidad con múltiples ejecutores
+    implementation ("androidx.core:core-ktx:1.6.0")
+
+
+
 }
 
