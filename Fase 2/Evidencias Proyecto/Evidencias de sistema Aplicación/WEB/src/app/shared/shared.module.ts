@@ -7,6 +7,8 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { PageHeaderComponent } from './components/page-header/page-header.component';
 import { AngularMaterialModuleGD } from './angular-material.module';
 import { FormUsuarioComponent } from './components/form-usuario/form-usuario.component';
+import { PdfGeneratorComponent } from './components/PDF/pdf-grafic-generate/pdf-grafic-generate.component';
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 
 
 
@@ -16,12 +18,14 @@ import { FormUsuarioComponent } from './components/form-usuario/form-usuario.com
     FormUsuarioComponent,
     SpinnerComponent,
     PageHeaderComponent,
+    PdfGeneratorComponent
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
     NgxSpinnerModule,
-    AngularMaterialModuleGD
+    AngularMaterialModuleGD,
+    NgxExtendedPdfViewerModule
   ], 
   exports:[
     SpinnerComponent,
@@ -29,7 +33,8 @@ import { FormUsuarioComponent } from './components/form-usuario/form-usuario.com
     FormUsuarioComponent,
     NgxSpinnerModule,
     PageHeaderComponent,
-    AngularMaterialModuleGD
+    AngularMaterialModuleGD,
+    PdfGeneratorComponent
 
   ]
 })

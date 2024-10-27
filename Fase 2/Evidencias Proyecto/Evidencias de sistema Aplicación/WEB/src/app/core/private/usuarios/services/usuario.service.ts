@@ -30,6 +30,6 @@ export class UsuarioService {
   }
 
   getListaUsuarios():Observable<UsuariosResponse>{
-    return this.http.get<UsuariosResponse>(this.url + 'Acceso/ListarUsuarios');
+    return this.http.get<UsuariosResponse>('/api/Acceso/ListarUsuarios');
   }
 }

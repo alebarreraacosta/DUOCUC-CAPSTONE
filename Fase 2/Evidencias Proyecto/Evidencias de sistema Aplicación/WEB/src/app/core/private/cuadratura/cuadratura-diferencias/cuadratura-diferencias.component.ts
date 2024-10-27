@@ -7,6 +7,7 @@ import { DetalleInventarioResponse } from '../interfaces/request';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { localePaginator } from '../utils/customFunctions';
+import { CuadraturaDataSessionService } from '../services/cuadratura-session.service';
 
 
 
@@ -34,14 +35,15 @@ export class CuadraturaDiferenciasComponent implements OnInit {
     private cuadraturaService : CuadraturaService,
     private spinnerService: SpinnerService,
     private alertService: AlertService,
+    private cuadraturaSession:CuadraturaDataSessionService
   ){
     this.dataSource = new MatTableDataSource(this.dataDetalleIntentarios);
   }
 
   ngOnInit(): void {
-    this.codigoInventario = this.cuadraturaDataService.getData().codigo;
-    this.fecha = this.cuadraturaDataService.getData().fecha;
-    this.estado = this.cuadraturaDataService.getData().estado;
+    this.codigoInventario = JSON.parse(this.cuadraturaSession.getDataInventario()!).codigo;
+    this.fecha = JSON.parse(this.cuadraturaSession.getDataInventario()!).fecha;
+    this.estado = JSON.parse(this.cuadraturaSession.getDataInventario()!).estado;
     this.spinnerService.showSpinner('Cargando los detalle inventario ' +  this.codigoInventario+' ...');
     this.cuadraturaService.getListaDetalleInventario(this.codigoInventario).subscribe(
       {

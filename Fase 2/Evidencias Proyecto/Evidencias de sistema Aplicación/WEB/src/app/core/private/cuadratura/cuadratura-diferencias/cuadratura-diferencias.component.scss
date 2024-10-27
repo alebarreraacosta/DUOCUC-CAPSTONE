@@ -62,3 +62,29 @@ th,td{
     padding: 8px; 
     color: black;
 }
+
+::ng-deep mat-paginator {
+    background-color:  #fff !important;
+    color: black !important;
+  }
+
+::ng-deep .mat-mdc-paginator-icon{
+    fill: black !important;
+}
+
+::ng-deep .mat-mdc-paginator-navigation-first[disabled] .mat-mdc-paginator-icon,
+::ng-deep .mat-mdc-paginator-navigation-previous[disabled] .mat-mdc-paginator-icon,
+::ng-deep .mat-mdc-paginator-navigation-next[disabled] .mat-mdc-paginator-icon,
+::ng-deep .mat-mdc-paginator-navigation-last[disabled] .mat-mdc-paginator-icon {
+    fill: #cccccc !important;  
+    opacity: 1 !important;
+}
+
+::ng-deep .mat-mdc-tooltip-disabled:disabled{
+    background-color: #fff !important;
+}
+
+
+::ng-deep mat-icon{
+    margin-left: 3px;
+}

@@ -1,1 +1,28 @@
-<p>reportes works!</p>
+<app-page-header [pageTitle]="title"></app-page-header>
+
+<div>
+    <div class="d-flex">
+        <div class="margin-right-20">
+            <h3 ><b>Búsqueda por meses:</b></h3>
+        </div>
+        <div class="margin-right-20">
+            <mat-form-field>
+                <mat-select [value]="this.valorSelectorSeleccionadoMesAnnio" (selectionChange)="seleccionarMesAnnio($event)">
+                  <mat-option *ngFor="let mesAnnio of datosSelector" [value]="mesAnnio.mesAnnio">{{mesAnnio.mesAnnio}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+        </div>
+        <div>
+            <button class="btn-primary padding-20x10" (click)="generarReporte()">Generar Reporte</button>
+        </div>
+
+    </div>
+</div>
+
+<app-pdf-generator 
+*ngIf="isVisible"
+  [datosBodega]="inventarioBodega"
+  [datosSap]="inventarioSap"
+  [titulo]="'Reporte de Inventarios SAP y BODEGA'"
+  [logoUrl]="'assets/img/png/logo-solo.jpg'">
+</app-pdf-generator>

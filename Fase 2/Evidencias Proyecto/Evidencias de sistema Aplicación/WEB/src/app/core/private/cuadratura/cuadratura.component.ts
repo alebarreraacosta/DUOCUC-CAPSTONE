@@ -8,6 +8,7 @@ import { AlertService } from 'src/app/shared/service/sweetalert.service';
 import { CuadraturaDataService } from './signals/cuadratura-data.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { localePaginator } from './utils/customFunctions';
+import { CuadraturaDataSessionService } from './services/cuadratura-session.service';
 
 export interface InvoiceData {
   codigo: string;
@@ -37,7 +38,9 @@ export class CuadraturaComponent implements OnInit{
     private cuadraturaService : CuadraturaService,
     private spinnerService: SpinnerService,
     private alertService: AlertService,
-    private  cuadraturaDataService:CuadraturaDataService){
+    private  cuadraturaDataService:CuadraturaDataService,
+    private cuadraturaSessionService:CuadraturaDataSessionService
+  ){
 
     this.dataSource = new MatTableDataSource(this.dataIntentarios);
   }
@@ -61,7 +64,7 @@ export class CuadraturaComponent implements OnInit{
   }
 
   goToDetalle(datos:any){
-    this.cuadraturaDataService.setData({
+    this.cuadraturaSessionService.setDataInventario({
       codigo:datos.codigo,
       fecha:datos.fecha,
       estado: datos.estado
