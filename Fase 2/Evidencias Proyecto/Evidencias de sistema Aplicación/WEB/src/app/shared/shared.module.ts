@@ -9,6 +9,7 @@ import { AngularMaterialModuleGD } from './angular-material.module';
 import { FormUsuarioComponent } from './components/form-usuario/form-usuario.component';
 import { PdfGeneratorComponent } from './components/PDF/pdf-grafic-generate/pdf-grafic-generate.component';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+import { CuadrarProductoModalComponent } from './components/modals/cuadrar-producto-modal/cuadrar-producto-modal.component';
 
 
 
@@ -18,7 +19,8 @@ import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
     FormUsuarioComponent,
     SpinnerComponent,
     PageHeaderComponent,
-    PdfGeneratorComponent
+    PdfGeneratorComponent,
+    CuadrarProductoModalComponent
   ],
   imports: [
     CommonModule,

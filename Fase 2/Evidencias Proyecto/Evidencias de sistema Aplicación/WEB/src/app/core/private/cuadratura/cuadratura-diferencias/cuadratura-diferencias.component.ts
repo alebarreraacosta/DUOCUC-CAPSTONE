@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { CuadraturaDataService } from '../signals/cuadratura-data.service';
 import { AlertService } from 'src/app/shared/service/sweetalert.service';
 import { SpinnerService } from 'src/app/shared/service/spinner.service';
 import { CuadraturaService } from '../services/cuadratura.service';
@@ -8,6 +7,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { localePaginator } from '../utils/customFunctions';
 import { CuadraturaDataSessionService } from '../services/cuadratura-session.service';
+import { MatDialog } from '@angular/material/dialog';
+import { CuadrarProductoModalComponent } from 'src/app/shared/components/modals/cuadrar-producto-modal/cuadrar-producto-modal.component';
 
 
 
@@ -31,11 +32,11 @@ export class CuadraturaDiferenciasComponent implements OnInit {
   public dataSource: MatTableDataSource<DetalleInventarioResponse>;
 
   constructor(
-    private  cuadraturaDataService:CuadraturaDataService,
     private cuadraturaService : CuadraturaService,
     private spinnerService: SpinnerService,
     private alertService: AlertService,
-    private cuadraturaSession:CuadraturaDataSessionService
+    private cuadraturaSession:CuadraturaDataSessionService,
+    private dialogModal:MatDialog
   ){
     this.dataSource = new MatTableDataSource(this.dataDetalleIntentarios);
   }
@@ -102,5 +103,24 @@ export class CuadraturaDiferenciasComponent implements OnInit {
       this.paginator.firstPage();
     }
 
+  }
+  
+  cuadrar(producto:DetalleInventarioResponse){
+    const dialogRef = this.dialogModal.open(CuadrarProductoModalComponent, {
+      width: '500px', 
+      maxWidth: 'none',
+      data: {
+        inventario: this.codigoInventario,
+        stockSap: producto.stockSAP,
+        stockBodega: producto.stockBodega,
+      },
+      disableClose:true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Producto cuadrado:', result);
+      }
+    });
   }
 }

@@ -88,3 +88,8 @@ th,td{
 ::ng-deep mat-icon{
     margin-left: 3px;
 }
+
+.custom-dialog-width .mat-dialog-container {
+    width: 600px !important; 
+    max-width: 100vw !important;
+}
