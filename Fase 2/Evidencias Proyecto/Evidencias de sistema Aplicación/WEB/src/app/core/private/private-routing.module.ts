@@ -46,7 +46,8 @@ const routes: Routes = [
     HomeComponent,
     UsuariosComponent,
     CuadraturaComponent,
-    CuadraturaDiferenciasComponent
+    CuadraturaDiferenciasComponent, 
+    ReportesComponent
   ],
   imports: [
     RouterModule.forChild(routes),

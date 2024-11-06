@@ -1,0 +1,43 @@
+<div class="modal-container">
+
+  <div class="d-flex justify-content-between">
+    <div>
+      <h2>CUADRAR PRODUCTO</h2>
+      <p><b>INVENTARIO: {{ data.inventario }}</b></p>
+      <p><b>STOCK SAP: {{ data.stockSap }}</b> </p>
+      <p><b>STOCK BODEGA: {{ data.stockBodega }} </b> </p>
+
+
+    </div>
+    <div class="contador">
+      <span class="label">CANTIDAD A CUADRAR</span>
+      <div class="contador-container">
+        <button class="contador-btn" (click)="decrement()">-</button>
+        <span class="contador-display" id="cantidad">{{ cantidad }}</span>
+        <button class="contador-btn" (click)="increment()">+</button>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- Añade el atributo matInput al textarea -->
+  <div class="modal-field" >
+    <label for="descripcion"><b>Descripción:</b></label>
+    <br>
+    <textarea name="descripcion" id="descripcion" [(ngModel)]="descripcionEvidencia" ></textarea>
+  </div>
+
+  <div class="archi-container">
+    <button mat-raised-button class="adjuntar-pdf-button">
+      <label for="fileInput">Adjuntar PDF</label>
+    </button>
+    <input id="fileInput" type="file" (change)="onFileSelected($event)" hidden />
+    <span class="descripcion-archiv" *ngIf="archivoAdjunto"> <i class="material-icons margin-left-10px margin-right-5 color-red"> picture_as_pdf </i>{{ archivoAdjunto.name }} <i class="material-icons margin-left-10px color-green"> check_circle </i></span>
+  </div>
+
+  <div  class="modal-actions">
+    <button class="btn-cancel width-0" (click)="onCancelar()">Cancelar</button>
+    <button class="btn-primary-green width-0" (click)="onConfirmar()">Cuadrar</button>
+  </div>
+</div>

@@ -1,0 +1,125 @@
+@import '../../../../../assets/styles/dimension';
+@import '../../../../../assets/styles/buttons';
+@import '../../../../../assets/styles/colors';
+
+::ng-deep .mat-mdc-dialog-container {
+  --mdc-dialog-container-color: #fff !important;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.modal-container {
+  margin: 20px;
+}
+
+.modal-container h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.modal-container p {
+  margin: 0;
+  font-size: 0.9em;
+}
+
+.modal-field {
+  width: 100%;
+
+  .mat-form-field-flex {
+    background-color: #555555;
+    border-radius: 4px;
+  }
+
+  .mat-form-field-label {
+    color: #aaaaaa !important;
+  }
+
+  .mat-input-element {
+    color: white;
+  }
+}
+
+.adjuntar-pdf-button {
+  background-color: #b3e5fc;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+
+  button {
+    font-weight: bold;
+    padding: 8px 16px;
+  }
+
+}
+
+
+
+.contador {
+  display: flex;
+  flex-direction: column;
+  align-self: end;
+}
+
+.label {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.contador-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #e0e0e0;
+  padding: 8px;
+  border-radius: 20px;
+}
+
+.contador-btn {
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0 10px;
+  color: #333;
+}
+
+.contador-display {
+  display: inline-block;
+  width: 30px;
+  text-align: center;
+  font-weight: bold;
+  background-color: white;
+  padding: 5px;
+  border-radius: 50%;
+}
+
+
+.modal-field {
+  width: 100%;
+
+  textarea {
+    width: 100%;
+    height: 100px;
+    max-height: 100px;
+    resize: vertical;
+  }
+}
+
+
+.descripcion-archiv, .archi-container{
+  display: flex; justify-items: center; align-self: center;
+}
+
+.color-red{
+  color: $red;
+}
+
+.color-green{
+  color: $color-primary;
+}
