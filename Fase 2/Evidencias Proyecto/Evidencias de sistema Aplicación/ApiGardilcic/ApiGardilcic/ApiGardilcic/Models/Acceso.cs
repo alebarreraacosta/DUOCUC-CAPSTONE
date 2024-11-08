@@ -303,6 +303,45 @@ namespace ApiGardilcic.Models
             return listadoInventario;
         }
 
+        public int InsertarCabeceraInventario(int idUsuario, DateTime fechaInicio)
+        {
+            int idInventario = 0;
+
+            using (Conectar conexion = new Conectar())
+            {
+                conexion.Abrir();
+
+                SqlParameter[] parametros = new SqlParameter[2];
+                parametros[0] = new SqlParameter("id_usuario", idUsuario);
+                parametros[1] = new SqlParameter("fecha_inicio", fechaInicio);
+
+                DataTable tabla = conexion.EjecutarConsultaSelect("[inventario].[sp_insertar_cabecera_inventario]", CommandType.StoredProcedure, parametros);
+
+                if (tabla.Rows.Count > 0)
+                {
+                    idInventario = Convert.ToInt32(tabla.Rows[0]["id_inventario"]);
+                }
+            }
+
+            return idInventario;
+        }
+
+        public void EnviarCorreoFinalizacionInventario(int idInventario)
+        {
+            using (Conectar conexion = new Conectar())
+            {
+                conexion.Abrir();
+
+                SqlParameter[] parametros = new SqlParameter[1];
+                parametros[0] = new SqlParameter("id_inventario", idInventario);
+
+                // Ejecutar el procedimiento de envío de correo
+                conexion.EjecutarConsultaSelect("[inventario].[sp_envia_correo_finalizacion_inventario]", CommandType.StoredProcedure, parametros);
+            }
+        }
+
+
+
 
 
 

@@ -286,6 +286,39 @@ namespace ApiGardilcic.Controllers
             }
         }
 
+        public JsonResult InsertarCabeceraInventario(int idUsuario, DateTime fechaInicio)
+        {
+            try
+            {
+                // Llamar al procedimiento almacenado para insertar la cabecera
+                int idInventario = acceso.InsertarCabeceraInventario(idUsuario, fechaInicio);
+
+                // Validar si se insertó correctamente la cabecera
+                if (idInventario > 0)
+                {
+                    // Llamar al SP de envío de correo con el ID del inventario recién creado
+                    acceso.EnviarCorreoFinalizacionInventario(idInventario);
+
+                    // Devolver 200 OK con el ID del inventario creado
+                    Response.StatusCode = (int)HttpStatusCode.OK;
+                    return Json(new { exito = true, mensaje = "Cabecera del inventario insertada y correo enviado.", idInventario }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    // Error en la inserción
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Json(new { exito = false, mensaje = "Error al insertar la cabecera del inventario." }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Devolver 500 Internal Server Error si ocurre un error
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return Json(new { exito = false, mensaje = $"Error interno: {ex.Message}" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
 
 
 
