@@ -158,7 +158,200 @@ namespace ApiGardilcic.Models
                 return listaUsuarios;
             }
         }
+
+        public List<MesAnnioModel> ObtenerMesesInventarios()
+        {
+            using (Conectar conexion = new Conectar())
+            {
+                conexion.Abrir();
+
+                DataTable tabla = conexion.EjecutarConsultaSelect("[inventario].[sp_obtener_meses_inventarios]", CommandType.StoredProcedure, null);
+
+                List<MesAnnioModel> mesesInventarios = new List<MesAnnioModel>();
+                foreach (DataRow fila in tabla.Rows)
+                {
+                    mesesInventarios.Add(new MesAnnioModel
+                    {
+                        MesAnnio = fila["mesAnnio"].ToString(),
+                        Annio = fila["annio"].ToString(),
+                        Mes = fila["mes"].ToString()
+                    });
+                }
+
+                return mesesInventarios;
+            }
+        }
+        public List<ArticuloModel> ObtenerArticulosPorMes(int Mes, int Annio)
+        {
+            List<ArticuloModel> articulos = new List<ArticuloModel>();
+
+            using (Conectar conexion = new Conectar())
+            {
+                conexion.Abrir();
+
+                SqlParameter[] parametros = new SqlParameter[2];
+                parametros[0] = new SqlParameter("mes", Mes);
+                parametros[1] = new SqlParameter("annio", Annio);
+
+                DataTable tabla = conexion.EjecutarConsultaSelect("[inventario].[sp_obtener_articulos_por_mes]", CommandType.StoredProcedure, parametros);
+
+                foreach (DataRow fila in tabla.Rows)
+                {
+                    articulos.Add(new ArticuloModel
+                    {
+                        CodigoProducto = fila["codigoProducto"].ToString(),
+                        Descripcion = fila["descripcion"].ToString()
+                    });
+                }
+            }
+
+            return articulos;
+        }
+
+        public DatosGraficoModel ObtenerDatosGraficoPorMes(int mes, int annio)
+        {
+            DatosGraficoModel datosGrafico = new DatosGraficoModel
+            {
+                DatosSap = new List<ArticuloGraficoModel>(),
+                DatosFisico = new List<ArticuloGraficoModel>()
+            };
+
+            using (Conectar conexion = new Conectar())
+            {
+                conexion.Abrir();
+
+                SqlParameter[] parametros = new SqlParameter[2];
+                parametros[0] = new SqlParameter("mes", mes);
+                parametros[1] = new SqlParameter("annio", annio);
+
+                DataTable tabla = conexion.EjecutarConsultaSelect("[inventario].[sp_obtener_datos_grafico_por_mes]", CommandType.StoredProcedure, parametros);
+
+                foreach (DataRow fila in tabla.Rows)
+                {
+                    var articulo = new ArticuloGraficoModel
+                    {
+                        IdProducto = Convert.ToInt32(fila["idProducto"]),
+                        CodigoProducto = fila["codigoProducto"].ToString(),
+                        Cantidad = Convert.ToInt32(fila["cantidad"]),
+                        Descripcion = fila["descripcion"].ToString(),
+                        PrecioUnitario = Convert.ToInt32(fila["precioUnitario"]),  // Convertido a int
+                        Total = Convert.ToInt32(fila["total"])                    // Convertido a int
+                    };
+
+                    if (fila["origen"].ToString() == "SAP")
+                    {
+                        datosGrafico.DatosSap.Add(articulo);
+                    }
+                    else if (fila["origen"].ToString() == "Fisico")
+                    {
+                        datosGrafico.DatosFisico.Add(articulo);
+                    }
+                }
+            }
+
+            return datosGrafico;
+        }
+
+        public List<DatosGraficoProductoModel> ObtenerDatosGraficoProducto(string codigoProducto)
+        {
+            List<DatosGraficoProductoModel> datosGraficoProducto = new List<DatosGraficoProductoModel>();
+
+            using (Conectar conexion = new Conectar())
+            {
+                conexion.Abrir();
+
+                SqlParameter[] parametros = new SqlParameter[1];
+                parametros[0] = new SqlParameter("codigoProducto", codigoProducto);
+
+                DataTable tabla = conexion.EjecutarConsultaSelect("[inventario].[sp_obtener_datos_grafico_producto]", CommandType.StoredProcedure, parametros);
+
+                foreach (DataRow fila in tabla.Rows)
+                {
+                    datosGraficoProducto.Add(new DatosGraficoProductoModel
+                    {
+                        Mes = fila["mes"].ToString(),
+                        PrecioUnitario = Convert.ToDecimal(fila["precioUnitario"]),
+                        Cantidad = Convert.ToInt32(fila["cantidad"]),
+                        Total = Convert.ToDecimal(fila["total"])
+                    });
+                }
+            }
+
+            return datosGraficoProducto;
+        }
+        public List<InventarioModel> ObtenerListadoInventario()
+        {
+            List<InventarioModel> listadoInventario = new List<InventarioModel>();
+
+            using (Conectar conexion = new Conectar())
+            {
+                conexion.Abrir();
+
+                DataTable tabla = conexion.EjecutarConsultaSelect("[inventario].[sp_obtener_listado_inventario]", CommandType.StoredProcedure);
+
+                foreach (DataRow fila in tabla.Rows)
+                {
+                    listadoInventario.Add(new InventarioModel
+                    {
+                        CodigoInventario = fila["codigoInventario"].ToString(),
+                        Fecha = fila["fecha"].ToString(),
+                        Estado = fila["estado"].ToString()
+                    });
+                }
+            }
+
+            return listadoInventario;
+        }
+
+
+
+
     }
+
+    public class InventarioModel
+    {
+        public string CodigoInventario { get; set; }
+        public string Fecha { get; set; }
+        public string Estado { get; set; }
+    }
+    public class DatosGraficoProductoModel
+    {
+        public string Mes { get; set; }
+        public decimal PrecioUnitario { get; set; }
+        public int Cantidad { get; set; }
+        public decimal Total { get; set; }
+    }
+
+    public class DatosGraficoModel
+    {
+        public List<ArticuloGraficoModel> DatosSap { get; set; }
+        public List<ArticuloGraficoModel> DatosFisico { get; set; }
+    }
+
+    public class ArticuloGraficoModel
+    {
+        public int IdProducto { get; set; }
+        public string CodigoProducto { get; set; }
+        public int Cantidad { get; set; }
+        public string Descripcion { get; set; }
+        public int PrecioUnitario { get; set; }  // Cambiado a int
+        public int Total { get; set; }           // Cambiado a int
+    }
+
+
+
+    public class ArticuloModel
+    {
+        public string CodigoProducto { get; set; }
+        public string Descripcion { get; set; }
+    }
+    public class MesAnnioModel
+    {
+        public string MesAnnio { get; set; }
+        public string Annio { get; set; }
+        public string Mes { get; set; }
+    }
+
 
     // Clase para retornar la información del usuario
     public class UsuarioModel

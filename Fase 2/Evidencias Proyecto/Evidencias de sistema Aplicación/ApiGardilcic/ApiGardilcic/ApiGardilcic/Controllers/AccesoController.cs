@@ -3,12 +3,14 @@ using System.Net;
 using System;
 using System.Web.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ApiGardilcic.Controllers
 {
     public class AccesoController : Controller
     {
         Acceso acceso = new Acceso();
+        InventarioModel inventarioModel = new InventarioModel();
 
         // Método GET para obtener y validar usuario
         public JsonResult ObtenerUsuario(string correo, string contrasena)
@@ -152,5 +154,144 @@ namespace ApiGardilcic.Controllers
                 return Json(new { exito = false, mensaje = $"Error interno: {ex.Message}" }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        // Método para obtener la lista de meses y años de los inventarios realizados
+        public JsonResult ObtenerMesesInventarios()
+        {
+            try
+            {
+                var mesesInventarios = acceso.ObtenerMesesInventarios();
+
+                if (mesesInventarios != null && mesesInventarios.Any())
+                {
+                    // Devolver éxito si se obtuvo correctamente la lista
+                    Response.StatusCode = (int)HttpStatusCode.OK; // 200 OK
+                    return Json(new { exito = true, mesesInventarios }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    // Devolver error si no se encontraron datos
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Json(new { exito = false, mensaje = "No se encontraron meses de inventarios." }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Devolver error interno si ocurrió una excepción
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return Json(new { exito = false, mensaje = $"Error interno: {ex.Message}" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        // Método para obtener artículos por mes y año
+        public JsonResult ObtenerArticulosPorMes(int Mes, int Annio)
+        {
+            try
+            {
+                var resultado = acceso.ObtenerArticulosPorMes(Mes, Annio);
+
+                if (resultado != null && resultado.Count > 0)
+                {
+                    // Devolver 200 OK con los datos obtenidos
+                    Response.StatusCode = (int)HttpStatusCode.OK;
+                    return Json(new { exito = true, articulos = resultado }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    // Devolver 404 Not Found si no hay resultados
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Json(new { exito = false, mensaje = "No se encontraron artículos para el mes y año especificados" }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Devolver 500 Internal Server Error si ocurre un error
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return Json(new { exito = false, mensaje = $"Error interno: {ex.Message}" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        // Método para obtener datos del gráfico según el mes y año, diferenciando SAP y Físico
+        
+        public JsonResult ObtenerDatosGraficoPorMesAnnio(int mes, int annio)
+        {
+            try
+            {
+                var datosGrafico = acceso.ObtenerDatosGraficoPorMes(mes, annio);
+
+                // Devolver 200 OK con los datos en la estructura solicitada
+                Response.StatusCode = (int)HttpStatusCode.OK;
+                return Json(new { exito = true, datosGrafico }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                // Devolver 500 Internal Server Error si ocurre un error
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return Json(new { exito = false, mensaje = $"Error interno: {ex.Message}" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        // Método para obtener los datos de un producto específico para el gráfico de variación mensual
+        public JsonResult ObtenerDatosGraficoProductoSeleccionado(string idProducto)
+        {
+            try
+            {
+                // Llamar al método del modelo para obtener los datos del producto seleccionado
+                var datosGraficoProducto = acceso.ObtenerDatosGraficoProducto(idProducto);
+
+                // Validar si se encontraron datos para el producto
+                if (datosGraficoProducto == null || datosGraficoProducto.Count == 0)
+                {
+                    // Devolver 404 Not Found si no se encuentran datos para el producto especificado
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Json(new { exito = false, mensaje = "No se encontraron datos para el producto especificado." }, JsonRequestBehavior.AllowGet);
+                }
+
+                // Devolver 200 OK con los datos en la estructura solicitada
+                Response.StatusCode = (int)HttpStatusCode.OK;
+                return Json(new { exito = true, datosGraficoProducto }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                // Devolver 500 Internal Server Error si ocurre un error en el servidor
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return Json(new { exito = false, mensaje = $"Error interno: {ex.Message}" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public JsonResult ObtenerListadoInventario()
+        {
+            try
+            {
+                // Llamar al método del modelo para obtener el listado de inventarios
+                var inventarios = acceso.ObtenerListadoInventario();
+
+                // Verificar si se obtuvieron inventarios
+                if (inventarios == null || !inventarios.Any())
+                {
+                    // Devolver 404 Not Found si no se encontraron inventarios
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Json(new { exito = false, mensaje = "No se encontraron inventarios" }, JsonRequestBehavior.AllowGet);
+                }
+
+                // Devolver 200 OK con los datos de inventario
+                Response.StatusCode = (int)HttpStatusCode.OK;
+                return Json(new { exito = true, listadoInventario = inventarios }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                // Devolver 500 Internal Server Error si ocurre un error
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return Json(new { exito = false, mensaje = $"Error interno: {ex.Message}" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+
+
+
+
+
+
     }
 }
