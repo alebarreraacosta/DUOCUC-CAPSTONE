@@ -21,25 +21,25 @@
           <!-- Código Column -->
           <ng-container matColumnDef="codigo">
             <th mat-header-cell *matHeaderCellDef> Código </th>
-            <td mat-cell *matCellDef="let element"> {{element.codigo}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.CodigoInventario}} </td>
           </ng-container>
         
           <!-- Fecha Column -->
           <ng-container matColumnDef="fecha">
             <th mat-header-cell *matHeaderCellDef> Fecha </th>
-            <td mat-cell *matCellDef="let element"> {{element.fecha }} </td>
+            <td mat-cell *matCellDef="let element"> {{element.Fecha }} </td>
           </ng-container>
         
           <!-- Estado Column -->
           <ng-container matColumnDef="estado">
             <th mat-header-cell *matHeaderCellDef> Estado </th>
             <td mat-cell *matCellDef="let element" >
-              <span *ngIf="element.estado === 'Completado'" class="completed-status">
+              <span *ngIf="element.Estado === 'Completado'" class="completed-status">
                 <div class="completado">
                   Completado <mat-icon>check_circle</mat-icon>
                 </div>
               </span>
-              <span *ngIf="element.estado === 'Incompleto'" class="incomplete-status">
+              <span *ngIf="element.Estado === 'Incompleto'" class="incomplete-status">
                 <div class="incompletado">
                   Incompleto <mat-icon>error</mat-icon>
                 </div>
@@ -52,8 +52,8 @@
           <ng-container matColumnDef="acciones">
             <th mat-header-cell *matHeaderCellDef> Acciones </th>
             <td mat-cell *matCellDef="let element">
-              <button class="btn-primary-green width-50" *ngIf="element.estado === 'Completado'" (click)="goToDetalle(element)">Ver</button>
-              <button class="btn-cancel width-50"  *ngIf="element.estado === 'Incompleto'" (click)="goToDetalle(element)">Completar</button>
+              <button class="btn-primary-green width-50" *ngIf="element.Estado === 'Completado'" (click)="goToDetalle(element)">Ver</button>
+              <button class="btn-cancel width-50"  *ngIf="element.Estado === 'Incompleto'" (click)="goToDetalle(element)">Completar</button>
             </td>
           </ng-container>
         

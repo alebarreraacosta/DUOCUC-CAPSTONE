@@ -47,11 +47,11 @@ export class CuadraturaComponent implements OnInit{
   
   ngOnInit(): void {
     this.spinnerService.showSpinner('Cargando los inventarios...');
-    this.cuadraturaService.getListaInventarios().subscribe({
+    this.cuadraturaService.obtenerListaInventarios().subscribe({
       next:(result)=>{
         if(result){
           this.spinnerService.hideSpinner();
-          this.dataSource.data = result;
+          this.dataSource.data = result.listadoInventario;
           this.actualizarPaginado();
         }
       },error:(err)=>{
@@ -65,9 +65,9 @@ export class CuadraturaComponent implements OnInit{
 
   goToDetalle(datos:any){
     this.cuadraturaSessionService.setDataInventario({
-      codigo:datos.codigo,
-      fecha:datos.fecha,
-      estado: datos.estado
+      codigo:datos.CodigoInventario,
+      fecha:datos.Fecha,
+      estado: datos.Estado
     });
     this.router.navigate(['private/home/cuadratura-detalle']);
   }
@@ -81,7 +81,7 @@ export class CuadraturaComponent implements OnInit{
 
 
     this.dataSource.filterPredicate = (data, filter) => {
-      const dataStr = data.codigo.toLowerCase() + data.fecha.toLowerCase() + data.estado.toLowerCase();
+      const dataStr = data.CodigoInventario.toLowerCase() + data.Fecha.toLowerCase() + data.Estado.toLowerCase();
       return dataStr.includes(filter);
     };
   }

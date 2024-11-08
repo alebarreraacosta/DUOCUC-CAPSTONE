@@ -17,6 +17,7 @@ export class ReportesComponent implements OnInit{
   isVisible:boolean=false;
   inventarioBodega:DatosProductosGraficosReporte[]=[];
   inventarioSap:DatosProductosGraficosReporte[]=[];
+  mesAnnio:string="";
 
   constructor(private spinnerService: SpinnerService,
     private alertService: AlertService,
@@ -57,6 +58,7 @@ export class ReportesComponent implements OnInit{
 
   generarReporte(){
     this.spinnerService.showSpinner("Generando reporte...");
+    this.isVisible=false;
     forkJoin([
       this.reportesService.cargaDatosProductosInventarios( this.valorSelectorSeleccionadoMesAnnio),
       this.reportesService.cargaDatosProductosSAP( this.valorSelectorSeleccionadoMesAnnio),
@@ -65,6 +67,7 @@ export class ReportesComponent implements OnInit{
         if((result && result[0]) && result && result[1]){
           this.inventarioBodega = result[0].filter(x=>x.valorUnitario>=1000000)
           this.inventarioSap = result[1].filter(x=>x.valorUnitario>=1000000)
+          this.mesAnnio = this.valorSelectorSeleccionadoMesAnnio
           this.spinnerService.hideSpinner();
           this.isVisible=true;
         }else{
