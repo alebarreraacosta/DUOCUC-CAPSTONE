@@ -18,7 +18,7 @@ import { CuadrarProductoModalComponent } from 'src/app/shared/components/modals/
   styleUrls: ['./cuadratura-diferencias.component.scss']
 })
 export class CuadraturaDiferenciasComponent implements OnInit {
-  displayedColumns: string[] = ['codigo', 'descripcion', 'unidad-medida', 'stock-sap','stock-bodega','precio-unitario','precio-total', 'acciones'];
+  displayedColumns: string[] = ['codigo', 'descripcion', 'unidad-medida', 'stock-sap','stock-bodega','precio-unitario','precio-total','cuadrado', 'acciones'];
  
   title:string="Cuadratura Inventario";
 
@@ -106,6 +106,25 @@ export class CuadraturaDiferenciasComponent implements OnInit {
   }
   
   cuadrar(producto:DetalleInventarioResponse){
+    const dialogRef = this.dialogModal.open(CuadrarProductoModalComponent, {
+      width: '500px', 
+      maxWidth: 'none',
+      data: {
+        inventario: this.codigoInventario,
+        stockSap: producto.stockSAP,
+        stockBodega: producto.stockBodega,
+      },
+      disableClose:true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Producto cuadrado:', result);
+      }
+    });
+  }
+
+  ver(producto:DetalleInventarioResponse){
     const dialogRef = this.dialogModal.open(CuadrarProductoModalComponent, {
       width: '500px', 
       maxWidth: 'none',

@@ -152,8 +152,8 @@ export class PdfGeneratorComponent {
       console.error('Error cargando la imagen del logo:', error);
     }
 
-    pdf.setFontSize(20);
-    pdf.text(this.titulo || 'Reporte de Inventario', 60, 20);
+    pdf.setFontSize(16);
+    pdf.text(this.titulo || 'Reporte de Inventario', 40, 20);
 
     // Capturar gráfico de Bodega y SAP en alta resolución
     const imgBodega = this.captureHighResImage(this.chartBodega.nativeElement);

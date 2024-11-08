@@ -7,7 +7,7 @@
         <div>
             <mat-form-field>
                 <mat-select [value]="this.valorSelectorSeleccionadoMesAnnio" (selectionChange)="seleccionarMesAnnio($event)">
-                  <mat-option *ngFor="let mesAnnio of datosSelector" [value]="mesAnnio.mesAnnio">{{mesAnnio.mesAnnio}}</mat-option>
+                  <mat-option *ngFor="let mesAnnio of datosSelector" [value]="mesAnnio.MesAnnio">{{mesAnnio.MesAnnio}}</mat-option>
                 </mat-select>
               </mat-form-field>
         </div>
@@ -39,7 +39,7 @@
         <div >
             <mat-form-field >
                 <mat-select [value]="this.valorSelectorSeleccionadoProducto" (selectionChange)="seleccionarProducto($event)">
-                  <mat-option *ngFor="let producto of selectorProductos" [value]="producto.codigoProducto">{{producto.codigoProducto}}</mat-option>
+                  <mat-option *ngFor="let producto of selectorProductos" [value]="producto.CodigoProducto">{{producto.CodigoProducto}}</mat-option>
                 </mat-select>
               </mat-form-field>
         </div>

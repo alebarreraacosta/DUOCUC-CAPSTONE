@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { DetalleInventarioResponse, InventarioResponse } from '../interfaces/request';
+import { DetalleInventarioResponse, InventarioResponse, ListadoInventario } from '../interfaces/request';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
@@ -9,13 +9,18 @@ import { environment } from 'src/environments/environment';
 })
 export class CuadraturaService {
 
-  url: string = `${environment.HOST}`;
+  url: string = `${environment.HOST}/Acceso`;
   constructor(private http: HttpClient) { }
 
   
   getListaInventarios():Observable<InventarioResponse[]>{
     this.url = "http://demo7311560.mockable.io/cargainventarios";
     return this.http.get<InventarioResponse[]>(this.url );
+  }
+
+  obtenerListaInventarios():Observable<ListadoInventario>{
+    this.url = `${environment.HOST}/Acceso`;
+    return this.http.get<ListadoInventario>(`${this.url}/ObtenerListadoInventario` );
   }
 
   getListaDetalleInventario(codInventario:string){

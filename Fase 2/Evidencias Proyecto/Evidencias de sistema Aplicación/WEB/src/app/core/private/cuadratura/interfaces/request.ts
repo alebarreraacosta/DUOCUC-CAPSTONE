@@ -1,7 +1,13 @@
+
+export interface ListadoInventario{
+    exito:boolean;
+    listadoInventario: InventarioResponse[];
+}
+
 export interface InventarioResponse{
-    codigo: string;
-    fecha:string;
-    estado: string;
+    CodigoInventario: string;
+    Fecha:string;
+    Estado: string;
 }
 
 export interface DetalleInventarioResponse {
