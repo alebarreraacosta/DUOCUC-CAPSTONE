@@ -401,16 +401,23 @@ namespace ApiGardilcic.Models
         }
 
 
-        public List<CuadraturaDiferenciasCompletaModel> ObtenerCuadraturaDiferenciasCompleta()
+        public List<CuadraturaDiferenciasCompletaModel> ObtenerCuadraturaDiferenciasCompleta(string codigoInventario)
         {
             List<CuadraturaDiferenciasCompletaModel> diferencias = new List<CuadraturaDiferenciasCompletaModel>();
+
+            // Extraer el id_inventario del código (ejemplo: INV-004 => id_inventario = 4)
+            int idInventario = int.Parse(codigoInventario.Split('-')[1]);
 
             using (Conectar conexion = new Conectar())
             {
                 conexion.Abrir();
 
-                // Ejecutar el procedimiento almacenado para obtener las diferencias completas
-                DataTable tabla = conexion.EjecutarConsultaSelect("[Inventario].[sp_obtener_cuadratura_diferencias_completa]", CommandType.StoredProcedure);
+                // Crear y configurar los parámetros
+                SqlParameter[] parametros = new SqlParameter[1];
+                parametros[0] = new SqlParameter("@id_inventario", idInventario);
+
+                // Ejecutar el procedimiento almacenado para obtener las diferencias
+                DataTable tabla = conexion.EjecutarConsultaSelect("[Inventario].[sp_obtener_cuadratura_diferencias_completa]", CommandType.StoredProcedure, parametros);
 
                 foreach (DataRow fila in tabla.Rows)
                 {
@@ -430,6 +437,7 @@ namespace ApiGardilcic.Models
 
             return diferencias;
         }
+
 
         public bool InsertarItemNoEncontrado(List<ItemNoEncontradoModel> itemsNoEncontrados)
         {
@@ -462,8 +470,63 @@ namespace ApiGardilcic.Models
             }
         }
 
+        public CuadraturaProductoModel ObtenerProductoCuadrado(string codigoInventario, string codigoProducto)
+        {
+            // Extraer el id_inventario del código (ejemplo: INV-004 => id_inventario = 4)
+            int idInventario = int.Parse(codigoInventario.Split('-')[1]);
 
+            CuadraturaProductoModel producto = null;
 
+            using (Conectar conexion = new Conectar())
+            {
+                conexion.Abrir();
+
+                // Configurar parámetros
+                SqlParameter[] parametros = new SqlParameter[2];
+                parametros[0] = new SqlParameter("id_inventario", idInventario);
+                parametros[1] = new SqlParameter("codigo_producto", codigoProducto);
+
+                // Ejecutar el procedimiento almacenado para obtener el producto cuadrado
+                DataTable tabla = conexion.EjecutarConsultaSelect("[Inventario].[sp_obtener_datos_producto_cuadrado]", CommandType.StoredProcedure, parametros);
+
+                if (tabla.Rows.Count > 0)
+                {
+                    DataRow fila = tabla.Rows[0];
+                    producto = new CuadraturaProductoModel
+                    {
+                        codigoInventario = codigoInventario,
+                        codigoProducto = codigoProducto,
+                        cantidadACuadrar = Convert.ToInt32(fila["cantidadACuadrar"]),  // Asegurarse de que coincida con el nombre en el SP
+                        descripcion = fila["descripcion"].ToString(),
+                        pdfBase64 = fila["pdfBase64"] != DBNull.Value ? fila["pdfBase64"].ToString() : null
+                    };
+                }
+            }
+
+            return producto;
+        }
+
+        public bool CuadrarProducto(string codigoInventario, string codigoProducto, int cantidadACuadrar, string descripcion, string pdfBase64)
+        {
+            // Extraer el id de inventario del código (ejemplo: "INV-006" => idInventario = 6)
+            int idInventario = int.Parse(codigoInventario.Split('-')[1]);
+
+            using (Conectar conexion = new Conectar())
+            {
+                conexion.Abrir();
+
+                SqlParameter[] parametros = new SqlParameter[5];
+                parametros[0] = new SqlParameter("@id_inventario", idInventario);
+                parametros[1] = new SqlParameter("@codigo_producto", codigoProducto);
+                parametros[2] = new SqlParameter("@cantidad_a_cuadrar", cantidadACuadrar);
+                parametros[3] = new SqlParameter("@descripcion", descripcion ?? (object)DBNull.Value);
+                parametros[4] = new SqlParameter("@pdf_base64", pdfBase64 ?? (object)DBNull.Value);
+
+                conexion.EjecutarConsultaSelect("[Inventario].[sp_cuadrar_producto]", CommandType.StoredProcedure, parametros);
+
+                return true;
+            }
+        }
 
 
 
@@ -471,6 +534,27 @@ namespace ApiGardilcic.Models
 
 
     }
+
+    public class CuadrarProductoRequest
+    {
+        public string CodigoInventario { get; set; }
+        public string CodigoProducto { get; set; }
+        public int CantidadACuadrar { get; set; }
+        public string Descripcion { get; set; }
+        public string PdfBase64 { get; set; }
+    }
+
+
+    public class CuadraturaProductoModel
+    {
+        public string codigoInventario { get; set; }
+        public string codigoProducto { get; set; }
+        public int cantidadACuadrar { get; set; }
+        public string descripcion { get; set; }
+        public string pdfBase64 { get; set; }
+    }
+
+
     public class ItemNoEncontradoModel
     {
         public string NumeroArticulo { get; set; }

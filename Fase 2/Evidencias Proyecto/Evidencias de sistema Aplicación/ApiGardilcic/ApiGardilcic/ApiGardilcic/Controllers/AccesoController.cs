@@ -346,12 +346,12 @@ namespace ApiGardilcic.Controllers
 
 
 
-        public JsonResult ObtenerCuadraturaDiferenciasCompleta()
+        public JsonResult ObtenerCuadraturaDiferenciasCompleta(string codigoInventario)
         {
             try
             {
-                // Obtener las diferencias completas del último inventario incompleto
-                var diferencias = acceso.ObtenerCuadraturaDiferenciasCompleta();
+                // Obtener las diferencias completas del inventario especificado por el código
+                var diferencias = acceso.ObtenerCuadraturaDiferenciasCompleta(codigoInventario);
 
                 // Verificar si se encontraron diferencias
                 if (diferencias.Count > 0)
@@ -362,9 +362,10 @@ namespace ApiGardilcic.Controllers
                 }
                 else
                 {
-                    // Devolver mensaje con código 404 Not Found si no hay datos
-                    Response.StatusCode = (int)HttpStatusCode.NotFound;
-                    return Json(new { exito = false, mensaje = "No se encontraron diferencias para el último inventario incompleto." }, JsonRequestBehavior.AllowGet);
+                    // Devolver solo el código 204 No Content si no hay datos
+                    Response.StatusCode = (int)HttpStatusCode.NoContent;
+                    return null;
+
                 }
             }
             catch (Exception ex)
@@ -374,6 +375,7 @@ namespace ApiGardilcic.Controllers
                 return Json(new { exito = false, mensaje = $"Error interno: {ex.Message}" }, JsonRequestBehavior.AllowGet);
             }
         }
+
 
         public JsonResult CargarInventarioFisico(List<InventarioFisicoModel> datosInventario)
         {
@@ -446,6 +448,69 @@ namespace ApiGardilcic.Controllers
                 return Json(new { exito = false, mensaje = "Error interno: " + ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        public JsonResult VerProductoCuadrado(string codigoInventario, string codigoProducto)
+        {
+            try
+            {
+                // Obtener los detalles del producto cuadrado
+                var producto = acceso.ObtenerProductoCuadrado(codigoInventario, codigoProducto);
+
+                if (producto != null)
+                {
+                    // Devolver éxito con código 200 OK si se encuentra el producto
+                    Response.StatusCode = (int)HttpStatusCode.OK;
+                    return Json(new { exito = true, datos = producto }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    // Devolver código 204 No Content si no se encuentra el producto
+                    Response.StatusCode = (int)HttpStatusCode.NoContent;
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Devolver error interno con código 500 Internal Server Error si ocurre una excepción
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return Json(new { exito = false, mensaje = $"Error interno: {ex.Message}" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+
+      
+        public JsonResult CuadrarProducto(string codigoInventario, string codigoProducto, int cantidadACuadrar, string descripcion, string pdfBase64)
+        {
+            try
+            {
+                // Llamar al método del modelo para cuadrar el producto
+                bool exito = acceso.CuadrarProducto(codigoInventario, codigoProducto, cantidadACuadrar, descripcion, pdfBase64);
+
+                if (exito)
+                {
+                    Response.StatusCode = (int)HttpStatusCode.OK;
+                    return Json(new { exito = true, mensaje = "Producto cuadrado correctamente" });
+                }
+                else
+                {
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Json(new { exito = false, mensaje = "No se pudo cuadrar el producto" });
+                }
+            }
+            catch (Exception ex)
+            {
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return Json(new { exito = false, mensaje = $"Error interno: {ex.Message}" });
+            }
+        }
+
+
+
+
+
+
+
 
 
 
