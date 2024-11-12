@@ -296,12 +296,9 @@ namespace ApiGardilcic.Controllers
                 // Validar si se insertó correctamente la cabecera
                 if (idInventario > 0)
                 {
-                    // Llamar al SP de envío de correo con el ID del inventario recién creado
-                    acceso.EnviarCorreoFinalizacionInventario(idInventario);
-
                     // Devolver 200 OK con el ID del inventario creado
                     Response.StatusCode = (int)HttpStatusCode.OK;
-                    return Json(new { exito = true, mensaje = "Cabecera del inventario insertada y correo enviado.", idInventario }, JsonRequestBehavior.AllowGet);
+                    return Json(new { exito = true, mensaje = "Cabecera del inventario insertada correctamente.", idInventario }, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
@@ -317,6 +314,143 @@ namespace ApiGardilcic.Controllers
                 return Json(new { exito = false, mensaje = $"Error interno: {ex.Message}" }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        public JsonResult CargarInventarioSap(List<InventarioSapModel> datosInventario)
+        {
+            try
+            {
+                // Llama al método InsertarInventarioSap en el modelo Acceso
+                bool resultado = acceso.InsertarInventarioSap(datosInventario);
+
+                if (resultado)
+                {
+                    // Envía un código 200 OK si la inserción fue exitosa
+                    Response.StatusCode = (int)HttpStatusCode.OK;
+                    return Json(new { exito = true, mensaje = "Inventario SAP cargado correctamente" }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    // Envía un código 400 Bad Request si hubo un error en la inserción
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Json(new { exito = false, mensaje = "Error al cargar el inventario SAP" }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Envía un código 500 Internal Server Error si ocurre una excepción
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return Json(new { exito = false, mensaje = "Error interno: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+
+
+        public JsonResult ObtenerCuadraturaDiferenciasCompleta()
+        {
+            try
+            {
+                // Obtener las diferencias completas del último inventario incompleto
+                var diferencias = acceso.ObtenerCuadraturaDiferenciasCompleta();
+
+                // Verificar si se encontraron diferencias
+                if (diferencias.Count > 0)
+                {
+                    // Devolver éxito con código 200 OK si hay datos
+                    Response.StatusCode = (int)HttpStatusCode.OK;
+                    return Json(new { exito = true, datos = diferencias }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    // Devolver mensaje con código 404 Not Found si no hay datos
+                    Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return Json(new { exito = false, mensaje = "No se encontraron diferencias para el último inventario incompleto." }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Devolver error interno con código 500 Internal Server Error si ocurre una excepción
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return Json(new { exito = false, mensaje = $"Error interno: {ex.Message}" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public JsonResult CargarInventarioFisico(List<InventarioFisicoModel> datosInventario)
+        {
+            try
+            {
+                // Llama al método del modelo para insertar los datos en Inventario Físico
+                bool resultado = acceso.InsertarInventarioFisico(datosInventario);
+
+                if (resultado)
+                {
+                    // Enviar un código 200 OK si la inserción fue exitosa
+                    Response.StatusCode = (int)HttpStatusCode.OK;
+                    return Json(new { exito = true, mensaje = "Inventario físico cargado correctamente" }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    // Enviar un código 400 Bad Request si hubo un error en la inserción
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Json(new { exito = false, mensaje = "Error al cargar el inventario físico" }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Enviar un código 500 Internal Server Error si ocurre una excepción
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return Json(new { exito = false, mensaje = "Error interno: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public JsonResult EnviarCorreoFinalizacionInventario()
+        {
+            try
+            {
+                // Llamar al método del modelo para enviar el correo
+                acceso.EnviarCorreoFinalizacionInventario();
+
+                // Enviar un código 200 OK si el correo se envió correctamente
+                Response.StatusCode = (int)HttpStatusCode.OK;
+                return Json(new { exito = true, mensaje = "Correo de finalización de inventario enviado correctamente" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                // Enviar un código 500 Internal Server Error si ocurrió un error
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return Json(new { exito = false, mensaje = "Error interno: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+        public JsonResult InsertarItemNoEncontrado(List<ItemNoEncontradoModel> itemsNoEncontrados)
+        {
+            try
+            {
+                bool resultado = acceso.InsertarItemNoEncontrado(itemsNoEncontrados);
+
+                if (resultado)
+                {
+                    Response.StatusCode = (int)HttpStatusCode.OK;
+                    return Json(new { exito = true, mensaje = "Ítems no encontrados insertados correctamente." }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Json(new { exito = false, mensaje = "Error al insertar ítems no encontrados." }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return Json(new { exito = false, mensaje = "Error interno: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+
+
+
 
 
 

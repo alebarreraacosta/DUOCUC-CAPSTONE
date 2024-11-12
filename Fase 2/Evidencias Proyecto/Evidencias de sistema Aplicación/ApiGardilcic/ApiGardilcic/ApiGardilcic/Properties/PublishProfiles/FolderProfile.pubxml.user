@@ -5,7 +5,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>\\10.20.24.59\c$\inetpub\wwwroot\API_GARDILCIC</_PublishTargetUrl>
-    <History>True|2024-11-06T01:41:37.5735100Z;True|2024-11-05T22:37:48.8383536-03:00;True|2024-11-05T22:19:33.6143312-03:00;True|2024-11-05T22:18:27.6553475-03:00;True|2024-11-05T17:28:04.2902159-03:00;True|2024-11-05T17:25:14.7106701-03:00;True|2024-11-05T12:48:59.1210153-03:00;True|2024-10-09T16:28:21.8385720-03:00;</History>
+    <History>True|2024-11-11T21:04:49.1536747Z;True|2024-11-11T17:13:25.0429981-03:00;True|2024-11-05T22:41:37.5735100-03:00;True|2024-11-05T22:37:48.8383536-03:00;True|2024-11-05T22:19:33.6143312-03:00;True|2024-11-05T22:18:27.6553475-03:00;True|2024-11-05T17:28:04.2902159-03:00;True|2024-11-05T17:25:14.7106701-03:00;True|2024-11-05T12:48:59.1210153-03:00;True|2024-10-09T16:28:21.8385720-03:00;</History>
     <LastFailureDetails />
   </PropertyGroup>
   <ItemGroup>
@@ -79,10 +79,10 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>09/10/2013 16:29:20</publishTime>
     </File>
     <File Include="bin/ApiGardilcic.dll">
-      <publishTime>11/06/2024 16:59:43</publishTime>
+      <publishTime>11/11/2024 21:10:19</publishTime>
     </File>
     <File Include="bin/ApiGardilcic.pdb">
-      <publishTime>11/06/2024 16:59:43</publishTime>
+      <publishTime>11/11/2024 21:10:19</publishTime>
     </File>
     <File Include="bin/es/System.Net.Http.Formatting.resources.dll">
       <publishTime>05/27/2022 22:36:16</publishTime>
