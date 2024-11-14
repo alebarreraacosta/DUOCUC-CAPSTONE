@@ -303,10 +303,305 @@ namespace ApiGardilcic.Models
             return listadoInventario;
         }
 
+        public int InsertarCabeceraInventario(int idUsuario, DateTime fechaInicio)
+        {
+            int idInventario = 0;
+
+            using (Conectar conexion = new Conectar())
+            {
+                conexion.Abrir();
+
+                SqlParameter[] parametros = new SqlParameter[2];
+                parametros[0] = new SqlParameter("id_usuario", idUsuario);
+                parametros[1] = new SqlParameter("fecha_inicio", fechaInicio);
+
+                DataTable tabla = conexion.EjecutarConsultaSelect("[inventario].[sp_insertar_cabecera_inventario]", CommandType.StoredProcedure, parametros);
+
+                if (tabla.Rows.Count > 0)
+                {
+                    idInventario = Convert.ToInt32(tabla.Rows[0]["id_inventario"]);
+                }
+            }
+
+            return idInventario;
+        }
+
+        public bool InsertarInventarioSap(List<InventarioSapModel> datosInventario)
+        {
+            try
+            {
+                using (Conectar conexion = new Conectar())
+                {
+                    conexion.Abrir();
+
+                    foreach (var item in datosInventario)
+                    {
+                        SqlParameter[] parametros = new SqlParameter[9]; // Aumenta el tamaño del array a 9
+                        parametros[0] = new SqlParameter("numero_articulo", item.NumeroArticulo);
+                        parametros[1] = new SqlParameter("descripcion_articulo", item.DescripcionArticulo);
+                        parametros[2] = new SqlParameter("unidad_medida", item.UnidadMedida);
+                        parametros[3] = new SqlParameter("stock_almacen", item.StockAlmacen);
+                        parametros[4] = new SqlParameter("precio_unitario", item.PrecioUnitario);
+                        parametros[5] = new SqlParameter("saldo_almacen", item.SaldoAlmacen);
+                        parametros[6] = new SqlParameter("codigo_barras", item.CodigoBarras);
+                        parametros[7] = new SqlParameter("codigo_almacen", item.CodigoAlmacen); // Nuevo parámetro
+                        parametros[8] = new SqlParameter("fecha_carga", item.FechaCarga);       // Nuevo parámetro
+
+                        conexion.EjecutarConsultaNoSelect("[Inventario].[sp_insertar_inventario_sap]", CommandType.StoredProcedure, parametros);
+                    }
+                }
+
+                return true; // Inserción exitosa
+            }
+            catch (Exception)
+            {
+                return false; // Manejo de error
+            }
+        }
+
+        public bool InsertarInventarioFisico(List<InventarioFisicoModel> datosInventario)
+        {
+            try
+            {
+                using (Conectar conexion = new Conectar())
+                {
+                    conexion.Abrir();
+
+                    foreach (var item in datosInventario)
+                    {
+                        SqlParameter[] parametros = new SqlParameter[4];
+                        parametros[0] = new SqlParameter("cantidad_fisica", item.CantidadFisica);
+                        parametros[1] = new SqlParameter("fecha", item.Fecha);
+                        parametros[2] = new SqlParameter("id_usuario", item.IdUsuario);
+                        parametros[3] = new SqlParameter("numero_articulo", item.NumeroArticulo);
+
+                        // Ejecutar el procedimiento almacenado
+                        conexion.EjecutarConsultaNoSelect("[Inventario].[sp_insertar_inventario_fisico]", CommandType.StoredProcedure, parametros);
+                    }
+                }
+
+                return true; // Inserción exitosa
+            }
+            catch (Exception)
+            {
+                return false; // Error en la inserción
+            }
+        }
+
+
+        public void EnviarCorreoFinalizacionInventario()
+        {
+            using (Conectar conexion = new Conectar())
+            {
+                conexion.Abrir();
+
+                // Ejecutar el procedimiento de envío de correo
+                conexion.EjecutarConsultaSelect("[inventario].[sp_envia_correo_finalizacion_inventario]", CommandType.StoredProcedure, null);
+            }
+        }
+
+
+        public List<CuadraturaDiferenciasCompletaModel> ObtenerCuadraturaDiferenciasCompleta(string codigoInventario)
+        {
+            List<CuadraturaDiferenciasCompletaModel> diferencias = new List<CuadraturaDiferenciasCompletaModel>();
+
+            // Extraer el id_inventario del código (ejemplo: INV-004 => id_inventario = 4)
+            int idInventario = int.Parse(codigoInventario.Split('-')[1]);
+
+            using (Conectar conexion = new Conectar())
+            {
+                conexion.Abrir();
+
+                // Crear y configurar los parámetros
+                SqlParameter[] parametros = new SqlParameter[1];
+                parametros[0] = new SqlParameter("@id_inventario", idInventario);
+
+                // Ejecutar el procedimiento almacenado para obtener las diferencias
+                DataTable tabla = conexion.EjecutarConsultaSelect("[Inventario].[sp_obtener_cuadratura_diferencias_completa]", CommandType.StoredProcedure, parametros);
+
+                foreach (DataRow fila in tabla.Rows)
+                {
+                    diferencias.Add(new CuadraturaDiferenciasCompletaModel
+                    {
+                        CodArticulo = fila["codArticulo"].ToString(),
+                        Descripcion = fila["descripcion"].ToString(),
+                        Unidad = fila["unidad"].ToString(),
+                        StockSAP = Convert.ToInt32(fila["stockSAP"]),
+                        StockBodega = Convert.ToInt32(fila["stockBodega"]),
+                        PrecioUnitario = Convert.ToInt32(fila["precioUnitario"]),
+                        PrecioTotal = Convert.ToInt32(fila["precioTotal"]),
+                        IsCuadrado = Convert.ToBoolean(fila["isCuadrado"])
+                    });
+                }
+            }
+
+            return diferencias;
+        }
+
+
+        public bool InsertarItemNoEncontrado(List<ItemNoEncontradoModel> itemsNoEncontrados)
+        {
+            try
+            {
+                using (Conectar conexion = new Conectar())
+                {
+                    conexion.Abrir();
+
+                    foreach (var item in itemsNoEncontrados)
+                    {
+                        SqlParameter[] parametros = new SqlParameter[7];
+                        parametros[0] = new SqlParameter("numero_articulo", item.NumeroArticulo);
+                        parametros[1] = new SqlParameter("codigo_barras", item.CodigoBarras);
+                        parametros[2] = new SqlParameter("descripcion", item.Descripcion);
+                        parametros[3] = new SqlParameter("cantidad_contada", item.CantidadContada);
+                        parametros[4] = new SqlParameter("codigo_almacen", item.CodigoAlmacen);
+                        parametros[5] = new SqlParameter("fecha", item.Fecha);
+                        parametros[6] = new SqlParameter("id_usuario", item.IdUsuario);
+
+                        conexion.EjecutarConsultaNoSelect("[Inventario].[sp_insertar_item_no_encontrado]", CommandType.StoredProcedure, parametros);
+                    }
+                }
+
+                return true; // Inserción exitosa
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public CuadraturaProductoModel ObtenerProductoCuadrado(string codigoInventario, string codigoProducto)
+        {
+            // Extraer el id_inventario del código (ejemplo: INV-004 => id_inventario = 4)
+            int idInventario = int.Parse(codigoInventario.Split('-')[1]);
+
+            CuadraturaProductoModel producto = null;
+
+            using (Conectar conexion = new Conectar())
+            {
+                conexion.Abrir();
+
+                // Configurar parámetros
+                SqlParameter[] parametros = new SqlParameter[2];
+                parametros[0] = new SqlParameter("id_inventario", idInventario);
+                parametros[1] = new SqlParameter("codigo_producto", codigoProducto);
+
+                // Ejecutar el procedimiento almacenado para obtener el producto cuadrado
+                DataTable tabla = conexion.EjecutarConsultaSelect("[Inventario].[sp_obtener_datos_producto_cuadrado]", CommandType.StoredProcedure, parametros);
+
+                if (tabla.Rows.Count > 0)
+                {
+                    DataRow fila = tabla.Rows[0];
+                    producto = new CuadraturaProductoModel
+                    {
+                        codigoInventario = codigoInventario,
+                        codigoProducto = codigoProducto,
+                        cantidadACuadrar = Convert.ToInt32(fila["cantidadACuadrar"]),  // Asegurarse de que coincida con el nombre en el SP
+                        descripcion = fila["descripcion"].ToString(),
+                        pdfBase64 = fila["pdfBase64"] != DBNull.Value ? fila["pdfBase64"].ToString() : null
+                    };
+                }
+            }
+
+            return producto;
+        }
+
+        public bool CuadrarProducto(string codigoInventario, string codigoProducto, int cantidadACuadrar, string descripcion, string pdfBase64)
+        {
+            // Extraer el id de inventario del código (ejemplo: "INV-006" => idInventario = 6)
+            int idInventario = int.Parse(codigoInventario.Split('-')[1]);
+
+            using (Conectar conexion = new Conectar())
+            {
+                conexion.Abrir();
+
+                SqlParameter[] parametros = new SqlParameter[5];
+                parametros[0] = new SqlParameter("@id_inventario", idInventario);
+                parametros[1] = new SqlParameter("@codigo_producto", codigoProducto);
+                parametros[2] = new SqlParameter("@cantidad_a_cuadrar", cantidadACuadrar);
+                parametros[3] = new SqlParameter("@descripcion", descripcion ?? (object)DBNull.Value);
+                parametros[4] = new SqlParameter("@pdf_base64", pdfBase64 ?? (object)DBNull.Value);
+
+                conexion.EjecutarConsultaSelect("[Inventario].[sp_cuadrar_producto]", CommandType.StoredProcedure, parametros);
+
+                return true;
+            }
+        }
+
+
+
 
 
 
     }
+
+    public class CuadrarProductoRequest
+    {
+        public string CodigoInventario { get; set; }
+        public string CodigoProducto { get; set; }
+        public int CantidadACuadrar { get; set; }
+        public string Descripcion { get; set; }
+        public string PdfBase64 { get; set; }
+    }
+
+
+    public class CuadraturaProductoModel
+    {
+        public string codigoInventario { get; set; }
+        public string codigoProducto { get; set; }
+        public int cantidadACuadrar { get; set; }
+        public string descripcion { get; set; }
+        public string pdfBase64 { get; set; }
+    }
+
+
+    public class ItemNoEncontradoModel
+    {
+        public string NumeroArticulo { get; set; }
+        public string CodigoBarras { get; set; }
+        public string Descripcion { get; set; }
+        public int CantidadContada { get; set; }
+        public string CodigoAlmacen { get; set; }
+        public DateTime Fecha { get; set; }
+        public int IdUsuario { get; set; }
+    }
+
+
+
+    public class InventarioFisicoModel
+    {
+        public int CantidadFisica { get; set; }
+        public DateTime Fecha { get; set; }
+        public int IdUsuario { get; set; }
+        public string NumeroArticulo { get; set; }
+    }
+
+
+    public class InventarioSapModel
+    {
+        public string NumeroArticulo { get; set; }
+        public string DescripcionArticulo { get; set; }
+        public string UnidadMedida { get; set; }
+        public int StockAlmacen { get; set; }
+        public decimal PrecioUnitario { get; set; }
+        public decimal SaldoAlmacen { get; set; }
+        public string CodigoBarras { get; set; }
+        public string CodigoAlmacen { get; set; }  // Campo adicional
+        public DateTime FechaCarga { get; set; }   // Campo adicional
+    }
+
+    public class CuadraturaDiferenciasCompletaModel
+    {
+        public string CodArticulo { get; set; }
+        public string Descripcion { get; set; }
+        public string Unidad { get; set; }
+        public int StockSAP { get; set; }
+        public int StockBodega { get; set; }
+        public int PrecioUnitario { get; set; }
+        public int PrecioTotal { get; set; }
+        public bool IsCuadrado { get; set; }
+    }
+
 
     public class InventarioModel
     {
