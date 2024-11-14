@@ -51,4 +51,20 @@ export class AlertService {
       return result.isConfirmed;  // Retorna true si se confirmó, false si se canceló
     });
   }
+
+  showConfirmationEventoAlert(content: string| null, title: string = 'Confirmar acción', confirmButtonText: string = 'Confirmar', cancelButtonText: string = 'Cancelar'): Promise<boolean> {
+    return Swal.fire({
+      title: title,
+      html: content == null ? '':content  ,
+      icon: 'success',
+      showCancelButton: true,
+      confirmButtonText: confirmButtonText,
+      cancelButtonText: cancelButtonText,
+      backdrop:true,
+      allowOutsideClick: false, 
+      allowEscapeKey: false, 
+    }).then((result) => {
+      return result.isConfirmed;  // Retorna true si se confirmó, false si se canceló
+    });
+  }
 }
