@@ -65,8 +65,8 @@ export class ReportesComponent implements OnInit{
     ]).subscribe({
       next:(result)=>{
         if((result && result[0]) && result && result[1]){
-          this.inventarioBodega = result[0].filter(x=>x.valorUnitario>=1000000)
-          this.inventarioSap = result[1].filter(x=>x.valorUnitario>=1000000)
+          this.inventarioBodega = result[0];
+          this.inventarioSap = result[1];
           this.mesAnnio = this.valorSelectorSeleccionadoMesAnnio
           this.spinnerService.hideSpinner();
           this.isVisible=true;

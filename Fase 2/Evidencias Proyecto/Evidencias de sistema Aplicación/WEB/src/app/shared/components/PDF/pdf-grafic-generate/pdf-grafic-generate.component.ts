@@ -62,8 +62,8 @@ export class PdfGeneratorComponent {
   }
 
   generateCharts() {
-    const datosBodegaTop5 = this.datosBodega.slice(0, 5);
-    const datosSapTop5 = this.datosSap.slice(0, 5);
+    const datosBodegaTop5 = this.datosBodega.slice(0, 2);
+    const datosSapTop5 = this.datosSap.slice(0, 2);
 
     // Gráfico de inventario Bodega
     new Chart(this.chartBodega.nativeElement, {
@@ -161,13 +161,15 @@ export class PdfGeneratorComponent {
 
     // Añadir gráficos en una sola fila
     pdf.setFontSize(16);
-    pdf.text("TOP 5 de productos (valores superiores a $1.000.000)", 10, 50);
+    pdf.text("Articulos de mayor valor", 10, 50);
     pdf.addImage(imgBodega, 'PNG', 10, 60, 80, 60);
     pdf.addImage(imgSap, 'PNG', 110, 60, 80, 60);
 
     // Título y tabla de Inventario Bodega
+    pdf.line(10, 122, 200, 122);
+
     pdf.setFontSize(16);
-    pdf.text("Inventario Bodega (valores superiores a $1.000.000)", 10, 130);
+    pdf.text("Inventario Bodega gestionado", 10, 130);
     autoTable(pdf, {
       startY: 140,
       head: [['ID Producto', 'Código', 'Cantidad', 'Valor Unitario', 'Descripción']],
@@ -189,7 +191,7 @@ export class PdfGeneratorComponent {
     }
 
     // Título y tabla de Inventario SAP
-    pdf.text("Inventario SAP (valores superiores a $1.000.000)", 10, startY);
+    pdf.text("Inventario SAP gestionado", 10, startY);
     autoTable(pdf, {
       startY: startY + 10,
       head: [['ID Producto', 'Código', 'Cantidad', 'Valor Unitario', 'Descripción']],

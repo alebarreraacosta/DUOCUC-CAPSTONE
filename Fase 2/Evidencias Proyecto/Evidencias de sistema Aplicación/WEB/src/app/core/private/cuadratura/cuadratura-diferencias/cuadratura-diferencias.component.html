@@ -43,52 +43,52 @@
         <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
             <ng-container matColumnDef="codigo">
               <th mat-header-cell *matHeaderCellDef> Código </th>
-              <td mat-cell *matCellDef="let element" [ngClass]="!element.isCuadrado ? 'text-color-red':null"> {{element.codArticulo}} </td>
+              <td mat-cell *matCellDef="let element" [ngClass]="!element.IsCuadrado ? 'text-color-red':null"> {{element.CodArticulo}} </td>
             </ng-container>
           
             <ng-container matColumnDef="descripcion">
               <th mat-header-cell *matHeaderCellDef> Descripción </th>
-              <td mat-cell *matCellDef="let element" [ngClass]="!element.isCuadrado ? 'text-color-red':null"> {{element.descripcion }} </td>
+              <td mat-cell *matCellDef="let element" [ngClass]="!element.IsCuadrado ? 'text-color-red':null"> {{element.Descripcion }} </td>
             </ng-container>
           
             <ng-container matColumnDef="unidad-medida">
                 <th mat-header-cell *matHeaderCellDef> Unidad </th>
-                <td mat-cell *matCellDef="let element" [ngClass]="!element.isCuadrado ? 'text-color-red':null"> {{element.unidad }} </td>
+                <td mat-cell *matCellDef="let element" [ngClass]="!element.IsCuadrado ? 'text-color-red':null"> {{element.Unidad }} </td>
               </ng-container>
             
 
               
               <ng-container matColumnDef="stock-sap">
                 <th mat-header-cell *matHeaderCellDef> Stock SAP </th>
-                <td mat-cell *matCellDef="let element" [ngClass]="!element.isCuadrado ? 'text-color-red':null"> {{element.stockSAP }} </td>
+                <td mat-cell *matCellDef="let element" [ngClass]="!element.IsCuadrado ? 'text-color-red':null"> {{element.StockSAP }} </td>
               </ng-container>
         
                  
               <ng-container matColumnDef="stock-bodega">
                 <th mat-header-cell *matHeaderCellDef> Stock Bodega </th>
-                <td mat-cell *matCellDef="let element" [ngClass]="!element.isCuadrado ? 'text-color-red':null"> {{element.stockBodega }} </td>
+                <td mat-cell *matCellDef="let element" [ngClass]="!element.IsCuadrado ? 'text-color-red':null"> {{element.StockBodega }} </td>
               </ng-container>
               <ng-container matColumnDef="precio-unitario">
                 <th mat-header-cell *matHeaderCellDef> Precio Unitario </th>
-                <td mat-cell *matCellDef="let element" [ngClass]="!element.isCuadrado ? 'text-color-red':null"> {{element.precioUnitario | transformarPesosPipe }} </td>
+                <td mat-cell *matCellDef="let element" [ngClass]="!element.IsCuadrado ? 'text-color-red':null"> {{element.PrecioUnitario | transformarPesosPipe }} </td>
               </ng-container>
 
               <ng-container matColumnDef="precio-total">
                 <th mat-header-cell *matHeaderCellDef> Precio Total </th>
-                <td mat-cell *matCellDef="let element" [ngClass]="!element.isCuadrado ? 'text-color-red':null"> {{element.precioTotal | transformarPesosPipe }} </td>
+                <td mat-cell *matCellDef="let element" [ngClass]="!element.IsCuadrado ? 'text-color-red':null"> {{element.PrecioTotal | transformarPesosPipe }} </td>
               </ng-container>
 
               <ng-container matColumnDef="cuadrado">
                 <th mat-header-cell *matHeaderCellDef> Estado Producto </th>
-                <td mat-cell *matCellDef="let element" [ngClass]="!element.isCuadrado ? 'text-color-red':null"> {{element.isCuadrado ? 'Cuadrado': 'Falta Cuadrar' }} </td>
+                <td mat-cell *matCellDef="let element" [ngClass]="!element.IsCuadrado ? 'text-color-red':null"> {{element.IsCuadrado ? 'Cuadrado': 'Falta Cuadrar' }} </td>
               </ng-container>
 
           
             <ng-container matColumnDef="acciones">
               <th mat-header-cell *matHeaderCellDef> Acciones </th>
               <td mat-cell *matCellDef="let element">
-                <button   [ngClass]="!element.isCuadrado ? 'btn-cancel':'btn-primary-green'" (click)="element.isCuadrado ? ver(element): cuadrar(element)">
-                    {{ element.isCuadrado  ? 'Ver':'Cuadrar'}}
+                <button   [ngClass]="!element.IsCuadrado ? 'btn-cancel':'btn-primary-green'" (click)="element.IsCuadrado ? ver(element): cuadrar(element)">
+                    {{ element.IsCuadrado  ? 'Ver':'Cuadrar'}}
                 </button>
               </td>
             </ng-container>

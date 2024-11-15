@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { DetalleInventarioResponse, InventarioResponse, ListadoInventario } from '../interfaces/request';
+import { DetalleInventario, DetalleInventarioResponse, InventarioResponse, ListadoInventario, VerProductoCuadrado } from '../interfaces/request';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
@@ -23,8 +23,23 @@ export class CuadraturaService {
     return this.http.get<ListadoInventario>(`${this.url}/ObtenerListadoInventario` );
   }
 
-  getListaDetalleInventario(codInventario:string){
-    this.url = "http://demo7311560.mockable.io/detalleproductoinventario";
-    return this.http.get<DetalleInventarioResponse[]>(this.url );
+  getListaDetalleInventario(codInventario:string):Observable<DetalleInventario>{
+    this.url =  `${environment.HOST}Acceso`;
+    return this.http.get<DetalleInventario>(`${this.url}/ObtenerCuadraturaDiferenciasCompleta?codigoInventario=${codInventario}` );
+  }
+
+  verProductoCuadrado(idInventario:string, idProducto:string):Observable<VerProductoCuadrado>{
+    this.url =  `${environment.HOST}Acceso`;
+    return this.http.get<VerProductoCuadrado>(`${this.url}/VerProductoCuadrado?codigoInventario=${idInventario}&codigoProducto=${idProducto}` );
+  }
+
+
+  cuadrarProducto(formData:FormData):Observable<VerProductoCuadrado>{
+    this.url =  `${environment.HOST}Acceso`;
+    return this.http.post<VerProductoCuadrado>(`${this.url}/CuadrarProducto`,formData );
+  }
+
+  downloadFile(fileUrl: string) {
+    return this.http.get(fileUrl, { responseType: 'blob' }); // Solicita el archivo como un Blob
   }
 }

@@ -51,7 +51,7 @@ export class CuadraturaDiferenciasComponent implements OnInit {
         next:(result)=>{
           if(result){
             this.spinnerService.hideSpinner();
-            this.dataSource.data = result;
+            this.dataSource.data = result.datos;
             this.dataSource.filterPredicate = this.createFilter();
             this.actualizarPaginado();
           }
@@ -111,35 +111,54 @@ export class CuadraturaDiferenciasComponent implements OnInit {
       maxWidth: 'none',
       data: {
         inventario: this.codigoInventario,
-        stockSap: producto.stockSAP,
-        stockBodega: producto.stockBodega,
+        codProducto: producto.CodArticulo,
+        stockSap: producto.StockSAP,
+        stockBodega: producto.StockBodega,
+        isCuadratura:false
       },
       disableClose:true
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log('Producto cuadrado:', result);
+      if (result.recargar) {
+        this.ngOnInit();
       }
     });
   }
 
   ver(producto:DetalleInventarioResponse){
-    const dialogRef = this.dialogModal.open(CuadrarProductoModalComponent, {
-      width: '500px', 
-      maxWidth: 'none',
-      data: {
-        inventario: this.codigoInventario,
-        stockSap: producto.stockSAP,
-        stockBodega: producto.stockBodega,
-      },
-      disableClose:true
-    });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log('Producto cuadrado:', result);
-      }
-    });
+    this.cuadraturaService.verProductoCuadrado(this.codigoInventario,producto.CodArticulo).subscribe(
+      {
+        next:(result)=>{
+
+          const dialogRef = this.dialogModal.open(CuadrarProductoModalComponent, {
+            width: '500px', 
+            maxWidth: 'none',
+            data: {
+              inventario: this.codigoInventario,
+              stockSap: producto.StockSAP,
+              stockBodega: producto.StockBodega,
+              descripcionEvidencia: result.datos.descripcion,
+              cantidadCuadrada:result.datos.cantidadACuadrar,
+              pdfBase64 : result.datos.pdfBase64,
+              isCuadratura:true
+            },
+            disableClose:true
+          });
+
+          dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+              console.log('Producto cuadrado:', result);
+            }
+          });
+        },
+        error:()=>{}
+      })
+
+
+    
+
+
   }
 }

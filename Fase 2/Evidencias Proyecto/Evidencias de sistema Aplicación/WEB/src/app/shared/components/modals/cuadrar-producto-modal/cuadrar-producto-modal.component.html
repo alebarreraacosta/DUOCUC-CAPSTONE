@@ -12,9 +12,9 @@
     <div class="contador">
       <span class="label">CANTIDAD A CUADRAR</span>
       <div class="contador-container">
-        <button class="contador-btn" (click)="decrement()">-</button>
+        <button class="contador-btn" (click)="decrement()" [disabled]="data.isCuadratura">-</button>
         <span class="contador-display" id="cantidad">{{ cantidad }}</span>
-        <button class="contador-btn" (click)="increment()">+</button>
+        <button class="contador-btn" (click)="increment()" [disabled]="data.isCuadratura">+</button>
       </div>
     </div>
 
@@ -25,19 +25,27 @@
   <div class="modal-field" >
     <label for="descripcion"><b>Descripción:</b></label>
     <br>
-    <textarea name="descripcion" id="descripcion" [(ngModel)]="descripcionEvidencia" ></textarea>
+    <textarea name="descripcion" id="descripcion" [(ngModel)]="descripcionEvidencia" [disabled]="data.isCuadratura"></textarea>
   </div>
 
-  <div class="archi-container">
-    <button mat-raised-button class="adjuntar-pdf-button">
+  <div class="archi-container" *ngIf="!data.isCuadratura">
+    <button mat-raised-button class="adjuntar-pdf-button" >
       <label for="fileInput">Adjuntar PDF</label>
     </button>
     <input id="fileInput" type="file" (change)="onFileSelected($event)" hidden />
     <span class="descripcion-archiv" *ngIf="archivoAdjunto"> <i class="material-icons margin-left-10px margin-right-5 color-red"> picture_as_pdf </i>{{ archivoAdjunto.name }} <i class="material-icons margin-left-10px color-green"> check_circle </i></span>
   </div>
+  <div class="archi-container" *ngIf="data.isCuadratura">
+    <button mat-raised-button class="adjuntar-pdf-button" (click)="download()" [disabled]="data.pdfBase64==null">
+      Ver documento
+    </button>
+   
+  </div>
+
+
 
   <div  class="modal-actions">
-    <button class="btn-cancel width-0" (click)="onCancelar()">Cancelar</button>
-    <button class="btn-primary-green width-0" (click)="onConfirmar()">Cuadrar</button>
+    <button class="btn-cancel width-0" (click)="onCancelar()" > {{ data.isCuadratura ? 'Cerrar' : 'Cancelar'}}</button>
+    <button class="btn-primary-green width-0" (click)="onConfirmar()" *ngIf="!data.isCuadratura">Cuadrar</button>
   </div>
 </div>

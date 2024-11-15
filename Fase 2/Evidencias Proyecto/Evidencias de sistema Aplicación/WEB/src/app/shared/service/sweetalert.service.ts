@@ -48,7 +48,21 @@ export class AlertService {
       allowOutsideClick: false, 
       allowEscapeKey: false, 
     }).then((result) => {
-      return result.isConfirmed;  // Retorna true si se confirmó, false si se canceló
+      return result.isConfirmed; 
+    });
+  }
+
+  showConfirmationEventoAlert(content: string| null, title: string = 'Confirmar acción', confirmButtonText: string = 'Confirmar', cancelButtonText: string = 'Cancelar'): Promise<boolean> {
+    return Swal.fire({
+      title: title,
+      html: content == null ? '':content  ,
+      icon: 'success',
+      confirmButtonText: confirmButtonText,
+      backdrop:true,
+      allowOutsideClick: false, 
+      allowEscapeKey: false, 
+    }).then((result) => {
+      return result.isConfirmed;  
     });
   }
 }
