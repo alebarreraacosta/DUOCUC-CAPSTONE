@@ -46,13 +46,9 @@ export class CuadrarProductoModalComponent implements OnInit {
       console.error('No se ha proporcionado una ruta válida para el archivo.');
       return;
     }
-    const link = document.createElement('a');
-    link.href = this.data.pdfBase64; 
-    link.download = 'valeConsumo.pdf'; 
-    link.style.display = 'none';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+
+    window.open( this.data.pdfBase64, '_blank');
+
   }
 
   onConfirmar(): void {

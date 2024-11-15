@@ -48,7 +48,7 @@ export class AlertService {
       allowOutsideClick: false, 
       allowEscapeKey: false, 
     }).then((result) => {
-      return result.isConfirmed;  // Retorna true si se confirmó, false si se canceló
+      return result.isConfirmed; 
     });
   }
 
@@ -57,14 +57,12 @@ export class AlertService {
       title: title,
       html: content == null ? '':content  ,
       icon: 'success',
-      showCancelButton: true,
       confirmButtonText: confirmButtonText,
-      cancelButtonText: cancelButtonText,
       backdrop:true,
       allowOutsideClick: false, 
       allowEscapeKey: false, 
     }).then((result) => {
-      return result.isConfirmed;  // Retorna true si se confirmó, false si se canceló
+      return result.isConfirmed;  
     });
   }
 }

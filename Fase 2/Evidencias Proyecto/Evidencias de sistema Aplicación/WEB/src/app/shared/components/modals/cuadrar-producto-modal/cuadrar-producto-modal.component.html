@@ -36,8 +36,8 @@
     <span class="descripcion-archiv" *ngIf="archivoAdjunto"> <i class="material-icons margin-left-10px margin-right-5 color-red"> picture_as_pdf </i>{{ archivoAdjunto.name }} <i class="material-icons margin-left-10px color-green"> check_circle </i></span>
   </div>
   <div class="archi-container" *ngIf="data.isCuadratura">
-    <button mat-raised-button class="adjuntar-pdf-button" (click)="download()" >
-      Descargar PDF
+    <button mat-raised-button class="adjuntar-pdf-button" (click)="download()" [disabled]="data.pdfBase64==null">
+      Ver documento
     </button>
    
   </div>

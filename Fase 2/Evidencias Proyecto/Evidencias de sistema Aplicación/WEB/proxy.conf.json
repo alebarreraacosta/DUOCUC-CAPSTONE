@@ -7,5 +7,14 @@
       "pathRewrite": {
         "^/api": ""            
       }
+    },
+    "/sharepoint": {
+      "target": "https://grupogardilcic.sharepoint.com",
+      "secure": false,
+      "changeOrigin": true,
+      "logLevel": "debug",
+      "pathRewrite": {
+        "^/sharepoint": ""
+      }
     }
   }

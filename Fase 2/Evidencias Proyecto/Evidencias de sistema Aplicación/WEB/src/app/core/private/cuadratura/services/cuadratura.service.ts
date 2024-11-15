@@ -38,4 +38,8 @@ export class CuadraturaService {
     this.url =  `${environment.HOST}Acceso`;
     return this.http.post<VerProductoCuadrado>(`${this.url}/CuadrarProducto`,formData );
   }
+
+  downloadFile(fileUrl: string) {
+    return this.http.get(fileUrl, { responseType: 'blob' }); // Solicita el archivo como un Blob
+  }
 }
