@@ -32,14 +32,17 @@ import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 
 @Composable
-fun LoginScreen(navController: NavHostController, onLoginSuccess: (String, String) -> Unit) {
+fun LoginScreen(
+    navController: NavHostController,
+    onLoginSuccess: (Int, String, String) -> Unit // Acepta IdUsuario, Nombre y ApellidoPaterno
+) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var showErrorDialog by remember { mutableStateOf(false) } // Para mostrar el diálogo emergente de error
-    var showSuccessDialog by remember { mutableStateOf(false) } // Para mostrar el diálogo de éxito
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var showSuccessDialog by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
-    // Background color con el color #1b6d20
+    // Fondo verde
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -53,16 +56,16 @@ fun LoginScreen(navController: NavHostController, onLoginSuccess: (String, Strin
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Logo más grande
+            // Logo
             Image(
                 painter = painterResource(id = R.drawable.logo_gardilcic),
                 contentDescription = "Logo Gardilcic",
-                modifier = Modifier.size(300.dp) // Aumenta el tamaño del logo
+                modifier = Modifier.size(300.dp)
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Login Card que ahora incluye el ícono de usuario
+            // Card de login
             Card(
                 shape = RoundedCornerShape(24.dp),
                 elevation = CardDefaults.cardElevation(8.dp),
@@ -78,7 +81,7 @@ fun LoginScreen(navController: NavHostController, onLoginSuccess: (String, Strin
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    // Ícono de usuario más grande y dentro de la Card
+                    // Ícono de usuario
                     Card(
                         shape = CircleShape,
                         modifier = Modifier.size(120.dp),
@@ -96,7 +99,7 @@ fun LoginScreen(navController: NavHostController, onLoginSuccess: (String, Strin
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // Username Field
+                    // Campo de usuario
                     OutlinedTextField(
                         value = username,
                         onValueChange = { username = it },
@@ -105,8 +108,7 @@ fun LoginScreen(navController: NavHostController, onLoginSuccess: (String, Strin
                             Icon(
                                 imageVector = Icons.Filled.Email,
                                 contentDescription = "Email Icon",
-                                tint = Color.Black,
-                                modifier = Modifier.size(24.dp)
+                                tint = Color.Black
                             )
                         },
                         modifier = Modifier.fillMaxWidth(),
@@ -115,7 +117,7 @@ fun LoginScreen(navController: NavHostController, onLoginSuccess: (String, Strin
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Password Field
+                    // Campo de contraseña
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
@@ -124,8 +126,7 @@ fun LoginScreen(navController: NavHostController, onLoginSuccess: (String, Strin
                             Icon(
                                 imageVector = Icons.Filled.Lock,
                                 contentDescription = "Password Icon",
-                                tint = Color.Black,
-                                modifier = Modifier.size(24.dp)
+                                tint = Color.Black
                             )
                         },
                         modifier = Modifier.fillMaxWidth(),
@@ -136,19 +137,24 @@ fun LoginScreen(navController: NavHostController, onLoginSuccess: (String, Strin
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // Login Button con funcionalidad de autenticación
+                    // Botón de login
                     Button(
                         onClick = {
                             coroutineScope.launch {
                                 val usuario = loginUsuario(username, password)
                                 if (usuario != null) {
-                                    onLoginSuccess(usuario.Nombre, usuario.ApellidoPaterno)
-                                    showSuccessDialog = true // Mostrar el diálogo de éxito
+                                    // Pasa IdUsuario, Nombre y ApellidoPaterno al callback
+                                    onLoginSuccess(
+                                        usuario.IdUsuario,
+                                        usuario.Nombre,
+                                        usuario.ApellidoPaterno
+                                    )
+                                    
+                                    showSuccessDialog = true
                                 } else {
-                                    showErrorDialog = true // Mostrar el diálogo emergente si falló el login
+                                    showErrorDialog = true
                                 }
                             }
-                            //navController.navigate("import")
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -158,16 +164,16 @@ fun LoginScreen(navController: NavHostController, onLoginSuccess: (String, Strin
                         Text("Iniciar sesión", color = Color.White, fontSize = 20.sp)
                     }
 
-                    // Mostrar un diálogo emergente si las credenciales son incorrectas
+                    // Diálogo de error
                     if (showErrorDialog) {
                         AlertDialog(
-                            onDismissRequest = { showErrorDialog = false }, // Cerrar el diálogo si se toca fuera de él
+                            onDismissRequest = { showErrorDialog = false },
                             title = { Text("Error de autenticación") },
-                            text = { Text("El correo o la contraseña son incorrectos.") },
+                            text = { Text("El usuario o la contraseña son incorrectos.") },
                             confirmButton = {
                                 Button(
                                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF7300)),
-                                    onClick = { showErrorDialog = false } // Cerrar el diálogo
+                                    onClick = { showErrorDialog = false }
                                 ) {
                                     Text("Aceptar")
                                 }
@@ -175,18 +181,18 @@ fun LoginScreen(navController: NavHostController, onLoginSuccess: (String, Strin
                         )
                     }
 
-                    // Mostrar un diálogo emergente si el inicio de sesión fue exitoso
+                    // Diálogo de éxito
                     if (showSuccessDialog) {
                         AlertDialog(
-                            onDismissRequest = { showSuccessDialog = false }, // Cerrar el diálogo si se toca fuera de él
+                            onDismissRequest = { showSuccessDialog = false },
                             title = { Text("Inicio de sesión exitoso") },
                             text = { Text("Te has logueado correctamente.") },
                             confirmButton = {
                                 Button(
                                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF7300)),
                                     onClick = {
-                                        showSuccessDialog = false
-                                        navController.navigate("import") // Navegar a ImportScreen cuando se acepte el diálogo
+                                        showSuccessDialog = true
+                                        navController.navigate("import")
                                     }
                                 ) {
                                     Text("Aceptar")
@@ -200,34 +206,22 @@ fun LoginScreen(navController: NavHostController, onLoginSuccess: (String, Strin
     }
 }
 
-
-// Función para llamar a la API de autenticación
+// Función para autenticar al usuario
 suspend fun loginUsuario(correo: String, contrasena: String): Usuario? {
     val apiService = ApiClient.retrofit.create(ApiService::class.java)
-
     return withContext(Dispatchers.IO) {
         try {
             val response = apiService.obtenerUsuario(correo, contrasena)
             if (response.isSuccessful) {
                 val apiResponse = response.body()
-                // Si la autenticación es exitosa, devolvemos el usuario
                 if (apiResponse != null && apiResponse.exito && apiResponse.usuario != null) {
                     Log.d("Login", "Autenticación exitosa para el usuario: ${apiResponse.usuario.Nombre}")
-                    return@withContext apiResponse.usuario // Devuelve el usuario si la autenticación es exitosa
-                } else {
-                    Log.d("Login", "Autenticación fallida: Usuario no encontrado o datos incorrectos.")
-                    return@withContext null
+                    return@withContext apiResponse.usuario
                 }
-            } else {
-                Log.d("Login", "Error en la respuesta de la API: ${response.code()} - ${response.message()}")
-                return@withContext null
             }
-        } catch (e: HttpException) {
-            Log.e("Login", "Error HttpException: ${e.message}")
-            return@withContext null
         } catch (e: Exception) {
-            Log.e("Login", "Error general: ${e.message}")
-            return@withContext null
+            Log.e("Login", "Error: ${e.message}")
         }
+        return@withContext null
     }
 }

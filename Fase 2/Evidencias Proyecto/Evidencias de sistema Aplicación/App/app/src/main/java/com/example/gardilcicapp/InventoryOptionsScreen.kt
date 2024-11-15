@@ -217,11 +217,10 @@ fun InventoryOptionsScreen(
                 }
 
                 Spacer(modifier = Modifier.height(50.dp))
-
-                // Botón "Búsqueda por escritura"
+                // boton de busqueda por escritura
                 Button(
                     onClick = {
-                        // Acción para búsqueda por escritura
+                        navController.navigate("searchByText")
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF7300)),
                     shape = RoundedCornerShape(50),
@@ -234,11 +233,10 @@ fun InventoryOptionsScreen(
 
                 Spacer(modifier = Modifier.height(50.dp))
 
-                // Botón para mostrar los códigos de barras
                 Button(
                     onClick = {
-                        barcodes = dbHelper.getBarcodes()  // Obtener los códigos de barras desde la BD
-                        showBarcodesDialog = true
+                        barcodes = dbHelper.getItemsNoEncontrados() // Llama a la función para obtener los datos de la tabla
+                        showBarcodesDialog = true // Muestra el diálogo con los datos
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF7300)),
                     shape = RoundedCornerShape(50),
@@ -246,8 +244,10 @@ fun InventoryOptionsScreen(
                         .fillMaxWidth(0.8f)
                         .height(55.dp)
                 ) {
-                    Text("Mostrar códigos de barras", color = Color.White, fontSize = 20.sp)
+                    Text("Mostrar Items No Encontrados", color = Color.White, fontSize = 20.sp)
                 }
+
+
             }
         }
     )
@@ -343,6 +343,34 @@ fun InventoryOptionsScreen(
             }
         )
     }
+    // Diálogo para mostrar los items no encontrados
+    if (showBarcodesDialog) {
+        AlertDialog(
+            onDismissRequest = { showBarcodesDialog = false },
+            title = { Text(text = "Items No Encontrados") },
+            text = {
+                Column {
+                    if (barcodes.isNotEmpty()) {
+                        barcodes.forEach { item ->
+                            Text(text = item)
+                            Spacer(modifier = Modifier.height(8.dp)) // Espacio entre cada ítem
+                        }
+                    } else {
+                        Text("No se encontraron items en la tabla.")
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = { showBarcodesDialog = false },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF7300))
+                ) {
+                    Text("Cerrar", color = Color.White)
+                }
+            }
+        )
+    }
+
 }
 
 
@@ -517,6 +545,8 @@ fun launchCamera(barcodeScannerLauncher: ManagedActivityResultLauncher<Uri?, Bit
         Toast.makeText(context, "Error al intentar abrir la cámara", Toast.LENGTH_SHORT).show()
     }
 }
+
+
 
 
 
