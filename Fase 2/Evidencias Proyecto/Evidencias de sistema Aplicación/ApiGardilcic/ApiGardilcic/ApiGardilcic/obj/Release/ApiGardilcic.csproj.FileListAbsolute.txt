@@ -93,3 +93,17 @@ C:\API REPO\DUOCUC-CAPSTONE\Fase 2\Evidencias Proyecto\Evidencias de sistema Apl
 C:\API REPO\DUOCUC-CAPSTONE\Fase 2\Evidencias Proyecto\Evidencias de sistema Aplicación\ApiGardilcic\ApiGardilcic\ApiGardilcic\obj\Release\ApiGardilcic.csproj.CopyComplete
 C:\API REPO\DUOCUC-CAPSTONE\Fase 2\Evidencias Proyecto\Evidencias de sistema Aplicación\ApiGardilcic\ApiGardilcic\ApiGardilcic\obj\Release\ApiGardilcic.dll
 C:\API REPO\DUOCUC-CAPSTONE\Fase 2\Evidencias Proyecto\Evidencias de sistema Aplicación\ApiGardilcic\ApiGardilcic\ApiGardilcic\obj\Release\ApiGardilcic.pdb
+C:\API REPO\DUOCUC-CAPSTONE\Fase 2\Evidencias Proyecto\Evidencias de sistema Aplicación\ApiGardilcic\ApiGardilcic\ApiGardilcic\bin\Microsoft.Office.Client.Policy.dll
+C:\API REPO\DUOCUC-CAPSTONE\Fase 2\Evidencias Proyecto\Evidencias de sistema Aplicación\ApiGardilcic\ApiGardilcic\ApiGardilcic\bin\Microsoft.Office.Client.TranslationServices.dll
+C:\API REPO\DUOCUC-CAPSTONE\Fase 2\Evidencias Proyecto\Evidencias de sistema Aplicación\ApiGardilcic\ApiGardilcic\ApiGardilcic\bin\Microsoft.Office.SharePoint.Tools.dll
+C:\API REPO\DUOCUC-CAPSTONE\Fase 2\Evidencias Proyecto\Evidencias de sistema Aplicación\ApiGardilcic\ApiGardilcic\ApiGardilcic\bin\Microsoft.Online.SharePoint.Client.Tenant.dll
+C:\API REPO\DUOCUC-CAPSTONE\Fase 2\Evidencias Proyecto\Evidencias de sistema Aplicación\ApiGardilcic\ApiGardilcic\ApiGardilcic\bin\Microsoft.ProjectServer.Client.dll
+C:\API REPO\DUOCUC-CAPSTONE\Fase 2\Evidencias Proyecto\Evidencias de sistema Aplicación\ApiGardilcic\ApiGardilcic\ApiGardilcic\bin\Microsoft.SharePoint.Client.dll
+C:\API REPO\DUOCUC-CAPSTONE\Fase 2\Evidencias Proyecto\Evidencias de sistema Aplicación\ApiGardilcic\ApiGardilcic\ApiGardilcic\bin\Microsoft.SharePoint.Client.DocumentManagement.dll
+C:\API REPO\DUOCUC-CAPSTONE\Fase 2\Evidencias Proyecto\Evidencias de sistema Aplicación\ApiGardilcic\ApiGardilcic\ApiGardilcic\bin\Microsoft.SharePoint.Client.Publishing.dll
+C:\API REPO\DUOCUC-CAPSTONE\Fase 2\Evidencias Proyecto\Evidencias de sistema Aplicación\ApiGardilcic\ApiGardilcic\ApiGardilcic\bin\Microsoft.SharePoint.Client.Runtime.dll
+C:\API REPO\DUOCUC-CAPSTONE\Fase 2\Evidencias Proyecto\Evidencias de sistema Aplicación\ApiGardilcic\ApiGardilcic\ApiGardilcic\bin\Microsoft.SharePoint.Client.Search.Applications.dll
+C:\API REPO\DUOCUC-CAPSTONE\Fase 2\Evidencias Proyecto\Evidencias de sistema Aplicación\ApiGardilcic\ApiGardilcic\ApiGardilcic\bin\Microsoft.SharePoint.Client.Search.dll
+C:\API REPO\DUOCUC-CAPSTONE\Fase 2\Evidencias Proyecto\Evidencias de sistema Aplicación\ApiGardilcic\ApiGardilcic\ApiGardilcic\bin\Microsoft.SharePoint.Client.Taxonomy.dll
+C:\API REPO\DUOCUC-CAPSTONE\Fase 2\Evidencias Proyecto\Evidencias de sistema Aplicación\ApiGardilcic\ApiGardilcic\ApiGardilcic\bin\Microsoft.SharePoint.Client.UserProfiles.dll
+C:\API REPO\DUOCUC-CAPSTONE\Fase 2\Evidencias Proyecto\Evidencias de sistema Aplicación\ApiGardilcic\ApiGardilcic\ApiGardilcic\bin\Microsoft.SharePoint.Client.WorkflowServices.dll

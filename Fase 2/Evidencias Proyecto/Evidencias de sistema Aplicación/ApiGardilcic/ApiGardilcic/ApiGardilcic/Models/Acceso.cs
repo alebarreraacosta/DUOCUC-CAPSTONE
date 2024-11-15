@@ -4,6 +4,10 @@ using System.Data;
 using System.Data.SqlClient;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Web;
+using Microsoft.SharePoint.Client;
+using System.Security;
 
 namespace ApiGardilcic.Models
 {
@@ -506,27 +510,196 @@ namespace ApiGardilcic.Models
             return producto;
         }
 
-        public bool CuadrarProducto(string codigoInventario, string codigoProducto, int cantidadACuadrar, string descripcion, string pdfBase64)
+        public bool CuadrarProducto(string codigoInventario, string codigoProducto, int cantidadACuadrar, string descripcion, HttpPostedFileBase archivo)
         {
             // Extraer el id de inventario del código (ejemplo: "INV-006" => idInventario = 6)
             int idInventario = int.Parse(codigoInventario.Split('-')[1]);
 
-            using (Conectar conexion = new Conectar())
+            if (archivo == null || archivo.ContentLength == 0)
+            {
+                throw new ArgumentException("El archivo proporcionado no es válido.");
+            }
+
+            try
+            {
+                using (var conexion = new Conectar())
+                {
+                    conexion.Abrir();
+
+                    // Subir el archivo a SharePoint
+                    Stream archivoStream = archivo.InputStream;
+                    string nombreArchivo = Path.GetFileName(archivo.FileName);
+                    string carpetaDestino = "/sites/InformaticaGardilcic/Shared Documents/PDF_PRUEBAS_CIG_IGNACIO";
+
+
+                    string rutaArchivoSharePoint = SubirArchivoStream(archivoStream, nombreArchivo, carpetaDestino);
+
+                    // Agregar prefijo completo de URL para la ruta
+                    rutaArchivoSharePoint = $"https://grupogardilcic.sharepoint.com{rutaArchivoSharePoint}";
+
+                    // Ejecutar el procedimiento almacenado con la ruta del archivo
+                    SqlParameter[] parametros = new SqlParameter[5];
+                    parametros[0] = new SqlParameter("@id_inventario", idInventario);
+                    parametros[1] = new SqlParameter("@codigo_producto", codigoProducto);
+                    parametros[2] = new SqlParameter("@cantidad_a_cuadrar", cantidadACuadrar);
+                    parametros[3] = new SqlParameter("@descripcion", descripcion ?? (object)DBNull.Value);
+                    parametros[4] = new SqlParameter("@pdf_base64", rutaArchivoSharePoint);
+
+                    conexion.EjecutarConsultaSelect("[Inventario].[sp_cuadrar_producto]", CommandType.StoredProcedure, parametros);
+
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al cuadrar el producto: " + ex.Message);
+            }
+        }
+
+        private const string SharePointSiteUrl = "https://grupogardilcic.sharepoint.com/sites/InformaticaGardilcic";
+        private const string SharePointUser = "notificaciones@gardilcic.cl";
+        private const string SharePointPassword = "Ccfrfon1";
+
+        // Subir archivo a SharePoint y guardar la ruta en la base de datos
+        public string SubirArchivoStreamYGuardarRuta(int idDiferencia, Stream archivoStream, string nombreArchivo, string carpetaDestino)
+        {
+            try
+            {
+                // Subir archivo a SharePoint
+                string urlArchivoSharePoint = SubirArchivoStream(archivoStream, nombreArchivo, carpetaDestino);
+
+                // Guardar la ruta en la base de datos
+                GuardarRutaEnBaseDeDatos(idDiferencia, urlArchivoSharePoint);
+
+                return urlArchivoSharePoint;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al subir archivo y guardar ruta: " + ex.Message);
+            }
+        }
+
+        // Subir un archivo a SharePoint desde un Stream
+        private string SubirArchivoStream(Stream archivoStream, string nombreArchivo, string carpetaDestino)
+        {
+            if (archivoStream == null || archivoStream.Length == 0)
+            {
+                throw new ArgumentException("El archivo proporcionado no es válido.");
+            }
+
+            if (string.IsNullOrEmpty(carpetaDestino))
+            {
+                throw new ArgumentException("La ruta 'carpetaDestino' no puede estar vacía.");
+            }
+
+            try
+            {
+                using (var cliente = new ClientContext(SharePointSiteUrl))
+                {
+                    // Configurar credenciales de SharePoint
+                    SecureString contrasenaSegura = new SecureString();
+                    foreach (char c in SharePointPassword) { contrasenaSegura.AppendChar(c); }
+                    cliente.Credentials = new SharePointOnlineCredentials(SharePointUser, contrasenaSegura);
+
+                    // Validar que la carpeta destino exista
+                    var carpeta = cliente.Web.GetFolderByServerRelativeUrl(carpetaDestino);
+                    cliente.Load(carpeta);
+                    cliente.ExecuteQuery();
+
+                    // Subir archivo al SharePoint desde el Stream
+                    FileCreationInformation archivoNuevo = new FileCreationInformation
+                    {
+                        ContentStream = archivoStream,
+                        Url = nombreArchivo,
+                        Overwrite = true
+                    };
+
+                    var archivoSubido = carpeta.Files.Add(archivoNuevo);
+                    cliente.Load(archivoSubido);
+                    cliente.ExecuteQuery();
+
+                    return $"{carpetaDestino}/{nombreArchivo}";
+                }
+            }
+            catch (ServerException ex) when (ex.Message.Contains("does not exist"))
+            {
+                throw new Exception($"La carpeta especificada '{carpetaDestino}' no existe en SharePoint.");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al subir archivo a SharePoint: " + ex.Message);
+            }
+        }
+
+        // Guardar la ruta del archivo en la base de datos
+        private void GuardarRutaEnBaseDeDatos(int idDiferencia, string rutaArchivo)
+        {
+            using (var conexion = new Conectar())
             {
                 conexion.Abrir();
 
-                SqlParameter[] parametros = new SqlParameter[5];
-                parametros[0] = new SqlParameter("@id_inventario", idInventario);
-                parametros[1] = new SqlParameter("@codigo_producto", codigoProducto);
-                parametros[2] = new SqlParameter("@cantidad_a_cuadrar", cantidadACuadrar);
-                parametros[3] = new SqlParameter("@descripcion", descripcion ?? (object)DBNull.Value);
-                parametros[4] = new SqlParameter("@pdf_base64", pdfBase64 ?? (object)DBNull.Value);
+                SqlParameter[] parametros = new SqlParameter[2];
+                parametros[0] = new SqlParameter("idDiferencia", idDiferencia);
+                parametros[1] = new SqlParameter("rutaArchivo", rutaArchivo);
 
-                conexion.EjecutarConsultaSelect("[Inventario].[sp_cuadrar_producto]", CommandType.StoredProcedure, parametros);
-
-                return true;
+                conexion.EjecutarConsultaNoSelect("[Inventario].[sp_guardar_ruta_archivo]", CommandType.StoredProcedure, parametros);
             }
         }
+
+        public string ObtenerRutaArchivo(int idDiferencia)
+        {
+            try
+            {
+                using (var conexion = new Conectar())
+                {
+                    conexion.Abrir();
+
+                    SqlParameter[] parametros = new SqlParameter[1];
+                    parametros[0] = new SqlParameter("@idDiferencia", idDiferencia);
+
+                    DataTable resultado = conexion.EjecutarConsultaSelect("[Inventario].[sp_obtener_ruta_archivo]", CommandType.StoredProcedure, parametros);
+
+                    if (resultado.Rows.Count > 0)
+                    {
+                        return resultado.Rows[0]["rutaArchivo"].ToString();
+                    }
+
+                    return null; // Si no se encuentra la ruta
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al obtener la ruta del archivo: {ex.Message}");
+            }
+        }
+
+        // Descargar archivo desde SharePoint
+        public Stream ObtenerStreamArchivoSharePoint(string rutaSharePoint)
+        {
+            try
+            {
+                using (var cliente = new ClientContext(SharePointSiteUrl))
+                {
+                    SecureString contrasenaSegura = new SecureString();
+                    foreach (char c in SharePointPassword) { contrasenaSegura.AppendChar(c); }
+                    cliente.Credentials = new SharePointOnlineCredentials(SharePointUser, contrasenaSegura);
+
+                    // Obtener el archivo como stream desde SharePoint
+                    FileInformation fileInformation = Microsoft.SharePoint.Client.File.OpenBinaryDirect(cliente, rutaSharePoint);
+
+                    // Crear un MemoryStream para retornar el archivo
+                    MemoryStream memoryStream = new MemoryStream();
+                    fileInformation.Stream.CopyTo(memoryStream);
+                    memoryStream.Position = 0; // Resetear el puntero al inicio
+                    return memoryStream;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al obtener el archivo desde SharePoint: {ex.Message}");
+            }
+        }
+
 
 
 
