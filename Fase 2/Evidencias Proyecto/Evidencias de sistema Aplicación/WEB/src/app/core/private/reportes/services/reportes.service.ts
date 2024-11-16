@@ -30,4 +30,8 @@ export class ReportesService {
   }
 
   
+  cargaDatosProductosCuadrados(mesAnnio:string):Observable<DatosProductosGraficosReporte[]>{
+    this.url = 'http://demo7311560.mockable.io/productos-cuadrados'
+    return this.http.get<DatosProductosGraficosReporte[]>(this.url);
+  }
 }
