@@ -43,6 +43,7 @@ export class PdfGeneratorComponent {
 
   @Input() datosBodega!: any[];
   @Input() datosSap!: any[];
+  @Input() datosCuadrados!: any[];
   @Input() titulo!: string;
   @Input() logoUrl!: string;
   
@@ -196,6 +197,20 @@ export class PdfGeneratorComponent {
       startY: startY + 10,
       head: [['ID Producto', 'Código', 'Cantidad', 'Valor Unitario', 'Descripción']],
       body: this.datosSap.map(p => [
+        p.idProducto,
+        p.codigoProducto,
+        p.cantidad,
+        transformValoresAPesos(p.valorUnitario),
+        p.descripcion
+      ]),
+    });
+
+
+    pdf.text("Detalle cuadratura", 10, 130);
+    autoTable(pdf, {
+      startY: startY + 120,
+      head: [['ID Producto', 'Código', 'Cantidad', 'Valor Unitario', 'Descripción']],
+      body: this.datosCuadrados.map(p => [
         p.idProducto,
         p.codigoProducto,
         p.cantidad,

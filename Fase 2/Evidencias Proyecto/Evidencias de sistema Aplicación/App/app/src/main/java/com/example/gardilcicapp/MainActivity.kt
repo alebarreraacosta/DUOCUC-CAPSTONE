@@ -36,16 +36,18 @@ fun AppNavigation(navController: NavHostController) {
     var excelData by remember { mutableStateOf<List<List<String>>?>(null) }
     var usuarioNombre by remember { mutableStateOf("") }
     var usuarioApellidoPaterno by remember { mutableStateOf("") }
+    var idUsuario by remember { mutableStateOf(0) } // Cambiar de String a Int si `IdUsuario` es un entero
 
     NavHost(navController = navController, startDestination = "login") {
         composable("login") {
-            LoginScreen(navController = navController) { nombre, apellidoPaterno ->
-                usuarioNombre = nombre
-                usuarioApellidoPaterno = apellidoPaterno // Guardar también el apellido paterno
+            LoginScreen(navController = navController) { userId, nombre, apellidoPaterno ->
+                idUsuario = userId // Guardar el IdUsuario
+                usuarioNombre = nombre // Guardar el nombre
+                usuarioApellidoPaterno = apellidoPaterno // Guardar el apellido paterno
             }
         }
         composable("import") {
-            ImportScreen(navController = navController, usuarioNombre = usuarioNombre, usuarioApellidoPaterno = usuarioApellidoPaterno) { data ->
+            ImportScreen(navController = navController, usuarioNombre = usuarioNombre, usuarioApellidoPaterno = usuarioApellidoPaterno, idUsuario = idUsuario) { data ->
                 excelData = data // Guardamos los datos del Excel cuando se selecciona
             }
         }
@@ -78,8 +80,8 @@ fun AppNavigation(navController: NavHostController) {
                 navController = navController,
                 dbHelper = MyDatabaseHelper(LocalContext.current), // Asegúrate de pasar el contexto
                 onScanResult = { scannedCode ->
-                    // Aquí puedes manejar el resultado del escaneo
-                    // Por ejemplo, puedes mostrar un mensaje o navegar a otra pantalla
+
+
                 }
             )
         }
@@ -87,6 +89,67 @@ fun AppNavigation(navController: NavHostController) {
         composable("BarcodeScannerScreen") {
             BarcodeScannerScreen(navController = navController, dbHelper = MyDatabaseHelper(LocalContext.current))
         }
+
+        composable("articleDetails/{articleName}/{articleDescription}") { backStackEntry ->
+            val articleName = backStackEntry.arguments?.getString("articleName") ?: ""
+            val articleDescription = backStackEntry.arguments?.getString("articleDescription") ?: ""
+
+            ArticleDetailsScreen(
+                navController = navController,
+                articleName = articleName,
+                articleDescription = articleDescription,
+                usuarioNombre = usuarioNombre,
+                usuarioApellidoPaterno = usuarioApellidoPaterno,
+                dbHelper = MyDatabaseHelper(LocalContext.current),
+                idUsuario = idUsuario
+            )
+        }
+
+        /*composable("registerNewProduct") {
+            RegisterProductScreen(
+                navController = navController,
+                usuarioNombre = usuarioNombre,
+                usuarioApellidoPaterno = usuarioApellidoPaterno,
+                dbHelper = MyDatabaseHelper(LocalContext.current),
+                1
+            )
+        }*/
+
+        composable("registerNewProduct/{barcode}") { backStackEntry ->
+            val barcode = backStackEntry.arguments?.getString("barcode") ?: ""
+            RegisterProductScreen(
+                navController = navController,
+                usuarioNombre = usuarioNombre,
+                usuarioApellidoPaterno = usuarioApellidoPaterno,
+                dbHelper = MyDatabaseHelper(LocalContext.current),
+                idUsuario = idUsuario,
+                barcode = barcode
+            )
+        }
+
+
+
+
+        composable("searchByText") {
+            SearchByTextScreen(
+                navController = navController,
+                usuarioNombre = usuarioNombre,
+                usuarioApellidoPaterno = usuarioApellidoPaterno,
+                dbHelper = MyDatabaseHelper(LocalContext.current)
+            )
+        }
+
+        composable("productListScreen") {
+            ProductListScreen(
+                navController = navController,
+                usuarioNombre = usuarioNombre,
+                usuarioApellidoPaterno = usuarioApellidoPaterno,
+                dbHelper = MyDatabaseHelper(LocalContext.current)
+            )
+        }
+
+
+
 
     }
 }

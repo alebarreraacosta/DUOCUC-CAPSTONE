@@ -36,6 +36,7 @@ fun ImportScreen(
     navController: NavHostController,
     usuarioNombre: String,
     usuarioApellidoPaterno: String,
+    idUsuario: Int,
     onExcelDataRead: (List<List<String>>) -> Unit
 ) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -75,23 +76,38 @@ fun ImportScreen(
                 try {
                     dbHelper.truncateInventarioSAP()
 
-                    excelData?.drop(1)?.forEach { rowData -> // drop(1) para ignorar la cabecera
+                    val barcodeMap = mapOf(
+                        "RE2-EPIROC-1887" to "0000-RE2-EPIROC-1887",
+                        "RE2-SANDVK-7718" to "0000-RE2-SANDVK-7718",
+                        "FIE000823" to "0000-FIE000823",
+                        "FIE000832" to "0000-FIE000832",
+                        "RE2-JERCLA-8524" to "0000-RE2-JERCLA-8524",
+                        "HER001865" to "0000-HER001865",
+                        "RE2-SANDVK-0463" to "0000-RE2-SANDVK-0463",
+                        "RE2-SANDVK-0012" to "0000-RE2-SANDVK-0012",
+                        "HER001557" to "0000-HER001557",
+                        "FIE000829" to "0000-FIE000829"
+                    )
+
+
+                    excelData?.drop(1)?.forEach { rowData ->
                         if (rowData.size >= 8) {
                             val idInventario = rowData[0].toIntOrNull() ?: 0
                             val numeroArticulo = rowData[1]
                             val descripcionArticulo = rowData[2]
-                            val unidadMedida = rowData[3]
+                            val unidadMedida = if (rowData[3] == "0") "UNIDAD" else rowData[3]
                             val stockAlmacen = rowData[4].toIntOrNull() ?: 0
                             val precioUnitario = rowData[5].toFloatOrNull() ?: 0.0f
                             val saldoAlmacen = rowData[6].toIntOrNull() ?: 0
-                            val codigoBarras = rowData[7]
                             val codigoAlmacen = rowData[8]
+                            val codigoBarras = barcodeMap[numeroArticulo] ?: "Código no encontrado"
 
+                            // Llamar al método insertando el valor de unidadMedida
                             val result = dbHelper.insertInventarioSAP(
                                 idInventario = idInventario,
                                 numeroArticulo = numeroArticulo,
                                 descripcionArticulo = descripcionArticulo,
-                                unidadMedida = unidadMedida,
+                                unidadMedida = unidadMedida, // Asegúrate de pasar este valor
                                 stockAlmacen = stockAlmacen,
                                 precioUnitario = precioUnitario,
                                 saldoAlmacen = saldoAlmacen,
@@ -100,11 +116,21 @@ fun ImportScreen(
                                 fechaCarga = currentDate
                             )
 
+                            // Insertar un registro en la tabla Inventario
+                            val inventarioInsertResult = dbHelper.insertInventario(
+                                idUsuario = idUsuario, // ID del usuario obtenido al iniciar sesión
+                                fechaInicio = currentDate,
+                                fechaTermino = null,
+                                idEstado = null
+                            )
+
                             if (result == -1L) {
-                                throw Exception("Error al insertar los datos")
+                                Log.e("DatabaseError", "Error al insertar los datos del artículo: $numeroArticulo")
                             }
                         }
                     }
+
+
                     // Si todo fue exitoso
                     successMessage = "Datos insertados correctamente"
                 } catch (e: Exception) {
@@ -325,41 +351,39 @@ fun getFileNameFromUri(context: Context, uri: Uri): String? {
     return fileName
 }
 
+// metodo para leer el archivo excel
 fun readExcelFileFromUri(context: Context, uri: Uri): List<List<String>> {
     val data = mutableListOf<List<String>>()
 
     try {
         val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
         val workbook = WorkbookFactory.create(inputStream)
+        val sheet = workbook.getSheetAt(0) // Cambia según la hoja que necesites leer
 
-        // Selecciona la hoja "FORMATO_CARGA_MANUAL"
-        val sheet = workbook.getSheet("Hoja1")
         if (sheet == null) {
-            Log.e("ExcelError", "No se encontró la hoja FORMATO_CARGA_MANUAL")
+            Log.e("ExcelError", "No se encontró la hoja en el archivo")
             return emptyList()
         }
 
-        // Procesa las filas de la hoja seleccionada
         for (row in sheet) {
             val rowData = mutableListOf<String>()
             for (cell in row) {
-                when (cell.cellType) {
-                    org.apache.poi.ss.usermodel.CellType.STRING -> {
-                        rowData.add(cell.stringCellValue)
-                    }
-                    org.apache.poi.ss.usermodel.CellType.NUMERIC -> {
+                val cellValue = when {
+                    cell.cellType == org.apache.poi.ss.usermodel.CellType.STRING -> cell.stringCellValue
+                    cell.cellType == org.apache.poi.ss.usermodel.CellType.NUMERIC -> {
+                        // Si el valor numérico es entero, usa toLong(), de lo contrario usa toString()
                         if (cell.numericCellValue % 1 == 0.0) {
-                            // Si es un número entero
-                            rowData.add(cell.numericCellValue.toInt().toString())
+                            cell.numericCellValue.toLong().toString()
                         } else {
-                            // Si es un número decimal
-                            rowData.add(cell.numericCellValue.toString())
+                            cell.numericCellValue.toString()
                         }
                     }
-                    else -> {
-                        rowData.add("Unknown")
-                    }
+                    cell.cellType == org.apache.poi.ss.usermodel.CellType.BLANK -> ""
+                    else -> "no leido"
                 }
+
+
+                rowData.add(cellValue.trim()) // Trim para evitar espacios innecesarios
             }
             data.add(rowData)
         }
@@ -372,6 +396,7 @@ fun readExcelFileFromUri(context: Context, uri: Uri): List<List<String>> {
 
 
 
+
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun showInventoryDataDialog(
@@ -380,24 +405,28 @@ fun showInventoryDataDialog(
     onDismissRequest: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
-
     var showDialog by remember { mutableStateOf(false) }
     var inventoryText by remember { mutableStateOf("") }
 
     // Consulta los datos de la tabla Inventario_SAP
     scope.launch {
-        val inventarios = dbHelper.getAllInventarios()
+        val inventarios = dbHelper.getAllInventarios() // Usamos el método getAllInventarios()
 
         // Construir el mensaje que se mostrará en el AlertDialog
-        inventoryText = inventarios.joinToString(separator = "\n") { inventario ->
-            "ID: ${inventario["id_inventario_sap"]}, " +
-                    "Artículo: ${inventario["numero_articulo"]}, " +
-                    "Descripción: ${inventario["descripcion_articulo"]}, " +
-                    "Stock: ${inventario["stock_almacen"]}, " +
-                    "Precio: ${inventario["precio_unitario"]}, " +
-                    "Saldo: ${inventario["saldo_almacen"]}, " +
-                    "Codigo: ${inventario["codigo_barras"]}"
-
+        inventoryText = if (inventarios.isNotEmpty()) {
+            inventarios.joinToString(separator = "\n\n") { inventario ->
+                """
+                Número Artículo: ${inventario[MyDatabaseHelper.COLUMN_NUMERO_ARTICULO]}
+                Descripción: ${inventario[MyDatabaseHelper.COLUMN_DESCRIPCION_ARTICULO]}
+                Unidad de Medida: ${inventario[MyDatabaseHelper.COLUMN_UNIDAD_MEDIDA]}
+                Stock Almacén: ${inventario[MyDatabaseHelper.COLUMN_STOCK_ALMACEN]}
+                Precio Unitario: ${inventario[MyDatabaseHelper.COLUMN_PRECIO_UNITARIO]}
+                Saldo Almacén: ${inventario[MyDatabaseHelper.COLUMN_SALDO_ALMACEN]}
+                Código de Barras: ${inventario[MyDatabaseHelper.COLUMN_CODIGO_BARRAS]}
+                """.trimIndent()
+            }
+        } else {
+            "No se encontraron datos en la tabla Inventario_SAP."
         }
 
         showDialog = true
@@ -410,7 +439,7 @@ fun showInventoryDataDialog(
                 onDismissRequest()
             },
             title = {
-                Text(text = "Datos del Inventario")
+                Text(text = "Datos de la Tabla Inventario SAP")
             },
             text = {
                 Text(text = inventoryText)
@@ -428,3 +457,5 @@ fun showInventoryDataDialog(
         )
     }
 }
+
+
