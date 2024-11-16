@@ -4,6 +4,8 @@ using System;
 using System.Web.Mvc;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
+using System.IO;
 
 namespace ApiGardilcic.Controllers
 {
@@ -479,29 +481,35 @@ namespace ApiGardilcic.Controllers
 
 
 
-      
-        public JsonResult CuadrarProducto(string codigoInventario, string codigoProducto, int cantidadACuadrar, string descripcion, string pdfBase64)
+
+        public JsonResult CuadrarProducto(string codigoInventario, string codigoProducto, int cantidadACuadrar, string descripcion, HttpPostedFileBase archivo)
         {
             try
             {
+                if (archivo == null || archivo.ContentLength == 0)
+                {
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Json(new { exito = false, mensaje = "No se proporcionó un archivo válido." }, JsonRequestBehavior.AllowGet);
+                }
+
                 // Llamar al método del modelo para cuadrar el producto
-                bool exito = acceso.CuadrarProducto(codigoInventario, codigoProducto, cantidadACuadrar, descripcion, pdfBase64);
+                bool exito = acceso.CuadrarProducto(codigoInventario, codigoProducto, cantidadACuadrar, descripcion, archivo);
 
                 if (exito)
                 {
                     Response.StatusCode = (int)HttpStatusCode.OK;
-                    return Json(new { exito = true, mensaje = "Producto cuadrado correctamente" });
+                    return Json(new { exito = true, mensaje = "Producto cuadrado correctamente." }, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
                     Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    return Json(new { exito = false, mensaje = "No se pudo cuadrar el producto" });
+                    return Json(new { exito = false, mensaje = "No se pudo cuadrar el producto." }, JsonRequestBehavior.AllowGet);
                 }
             }
             catch (Exception ex)
             {
                 Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                return Json(new { exito = false, mensaje = $"Error interno: {ex.Message}" });
+                return Json(new { exito = false, mensaje = "Error interno: " + ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -509,6 +517,63 @@ namespace ApiGardilcic.Controllers
 
 
 
+
+
+
+
+        public JsonResult SubirArchivoSharePoint(int idDiferencia, HttpPostedFileBase archivo)
+        {
+            try
+            {
+                if (archivo == null || archivo.ContentLength == 0)
+                {
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Json(new { exito = false, mensaje = "No se proporcionó un archivo válido." }, JsonRequestBehavior.AllowGet);
+                }
+
+                // Obtener el Stream del archivo
+                Stream archivoStream = archivo.InputStream;
+                string nombreArchivo = Path.GetFileName(archivo.FileName);
+
+                // Definir la carpeta destino en SharePoint
+                string carpetaDestino = "/sites/InformaticaGardilcic/Shared Documents/PDF_PRUEBAS_CIG_IGNACIO";
+
+                // Subir archivo a SharePoint y guardar la ruta
+                string rutaSharePoint = acceso.SubirArchivoStreamYGuardarRuta(idDiferencia, archivoStream, nombreArchivo, carpetaDestino);
+
+                Response.StatusCode = (int)HttpStatusCode.OK;
+                return Json(new { exito = true, mensaje = "Archivo subido y registrado correctamente.", rutaSharePoint }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return Json(new { exito = false, mensaje = $"Error interno: {ex.Message}" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        public ActionResult DescargarArchivoSharePoint(int idDiferencia)
+        {
+            try
+            {
+                // Obtener la ruta del archivo desde la base de datos
+                string rutaArchivoSharePoint = acceso.ObtenerRutaArchivo(idDiferencia);
+
+                if (string.IsNullOrEmpty(rutaArchivoSharePoint))
+                {
+                    return new HttpStatusCodeResult(404, "No se encontró una ruta asociada al ID especificado.");
+                }
+
+                // Descargar el archivo como un stream desde SharePoint
+                Stream archivoStream = acceso.ObtenerStreamArchivoSharePoint(rutaArchivoSharePoint);
+                string nombreArchivo = Path.GetFileName(rutaArchivoSharePoint);
+
+                // Retornar el archivo como respuesta para descargarlo
+                return File(archivoStream, "application/octet-stream", nombreArchivo);
+            }
+            catch (Exception ex)
+            {
+                return new HttpStatusCodeResult(500, $"Error al descargar archivo: {ex.Message}");
+            }
+        }
 
 
 
