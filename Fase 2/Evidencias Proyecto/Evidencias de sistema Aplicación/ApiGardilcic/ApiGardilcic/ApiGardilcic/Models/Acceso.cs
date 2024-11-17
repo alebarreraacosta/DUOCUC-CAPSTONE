@@ -556,9 +556,9 @@ namespace ApiGardilcic.Models
             }
         }
 
-        private const string SharePointSiteUrl = "https://grupogardilcic.sharepoint.com/sites/InformaticaGardilcic";
-        private const string SharePointUser = "notificaciones@gardilcic.cl";
-        private const string SharePointPassword = "Ccfrfon1";
+        private const string SharePointSiteUrl = "";
+        private const string SharePointUser = "";
+        private const string SharePointPassword = "";
 
         // Subir archivo a SharePoint y guardar la ruta en la base de datos
         public string SubirArchivoStreamYGuardarRuta(int idDiferencia, Stream archivoStream, string nombreArchivo, string carpetaDestino)
